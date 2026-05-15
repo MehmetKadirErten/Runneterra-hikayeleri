@@ -3,30 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fırtınanın Pençeleri - Runeterra Günlükleri</title>
+  <title>Fırtınanın Pençeleri — Runeterra Günlükleri</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #06080f; --bg2: #090d18; --border: #1a2035;
-      --gold: #c8972a; --gold2: #e8c060; --text: #d4c9b8; --muted: #6a7080;
-      --freljord: #7bcfff; --freljord-bg: rgba(123, 207, 255, 0.1);
+      --bg: #06080f;
+      --card: #0b1020;
+      --border: #1a2035;
+      --gold: #c8972a;
+      --gold2: #e8c060;
+      --ice: #7bcfff;
+      --ice2: #b8e8ff;
+      --text: #d4c9b8;
+      --muted: #6a7080;
     }
 
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'Crimson Pro', serif; font-size: 19px; line-height: 1.8; overflow-x: hidden; margin: 0; }
 
-    /* NAV MENÜSÜ */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(123, 207, 255, 0.15); }
-    .logo { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
-    .logo span { color: var(--text); font-weight: 400; }
-    nav ul { display: flex; gap: 36px; list-style: none; }
-    nav a { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; }
-    nav a:hover { color: var(--freljord); text-shadow: 0 0 10px var(--freljord-bg); }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 19px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
 
-    /* SİNEMATİK BAŞLIK BÖLÜMÜ */
+    /* ── INTRO ── */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .intro-clouds {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 140% 70% at 50% 10%, #0d1828 0%, transparent 65%),
+        radial-gradient(ellipse 90% 50% at 15% 55%, #060d18 0%, transparent 55%),
+        radial-gradient(ellipse 90% 50% at 85% 60%, #060d18 0%, transparent 55%),
+        #000;
+      animation: cloudDrift 6s ease-in-out infinite alternate;
+    }
+    @keyframes cloudDrift {
+      from { transform: scale(1) translateX(0); }
+      to   { transform: scale(1.04) translateX(-8px); }
+    }
+
+    /* Canvas yıldırım katmanı */
+    #lightningCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Flaş overlay */
+    #flash {
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* Dönen rün çemberi */
+    .rune-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(123,207,255,0.08);
+      pointer-events: none;
+    }
+    .rune-ring:nth-child(1) { width: 520px; height: 520px; top:50%; left:50%; transform:translate(-50%,-50%); animation: spin 12s linear infinite; }
+    .rune-ring:nth-child(2) { width: 420px; height: 420px; top:50%; left:50%; transform:translate(-50%,-50%); border-style:dashed; border-color:rgba(200,151,42,0.07); animation: spin 8s linear infinite reverse; }
+    .rune-ring:nth-child(3) { width: 320px; height: 320px; top:50%; left:50%; transform:translate(-50%,-50%); animation: spin 5s linear infinite; border-color:rgba(123,207,255,0.06); }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    /* İçerik */
+    .intro-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      animation: contentRise 0.7s ease-out 0.3s both;
+    }
+    @keyframes contentRise {
+      from { opacity:0; transform:translateY(24px) scale(0.96); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    .intro-icon {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 24px var(--ice)) drop-shadow(0 0 60px rgba(123,207,255,0.35));
+      animation: iconPulse 2s ease-in-out infinite;
+    }
+    @keyframes iconPulse {
+      0%,100% { filter: drop-shadow(0 0 18px var(--ice)) drop-shadow(0 0 40px rgba(123,207,255,0.25)); }
+      50%      { filter: drop-shadow(0 0 48px var(--ice)) drop-shadow(0 0 90px rgba(123,207,255,0.55)); }
+    }
+
+    .intro-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(52px, 9vw, 108px);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.14em;
+      line-height: 1;
+      margin-bottom: 14px;
+      text-shadow: 0 0 40px rgba(123,207,255,0.3);
+      animation: titleFlicker 4s ease-in-out infinite;
+    }
+    @keyframes titleFlicker {
+      0%,90%,100% { opacity:1; }
+      92% { opacity:0.8; }
+      94% { opacity:1; }
+      96% { opacity:0.85; }
+    }
+
+    .intro-sub {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(11px, 1.8vw, 15px);
+      color: var(--ice);
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 52px;
+    }
+
+    .intro-skip {
+      display: inline-block;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      border: 1px solid rgba(123,207,255,0.18);
+      cursor: pointer;
+      transition: all 0.3s;
+      animation: contentRise 0.5s ease-out 1.2s both;
+    }
+    .intro-skip:hover { color: var(--ice); border-color: rgba(123,207,255,0.45); background: rgba(123,207,255,0.04); }
+
+    #introProgress {
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--ice), var(--gold));
+      box-shadow: 0 0 12px var(--ice);
+      transition: width 0.1s linear;
+    }
+
+    #intro.exiting { animation: introOut 0.9s ease-in forwards; }
+    @keyframes introOut {
+      0%   { opacity:1; transform:scale(1); }
+      40%  { opacity:1; transform:scale(1.04); }
+      100% { opacity:0; transform:scale(1.08); pointer-events:none; }
+    }
+
+    /* ── MAIN ── */
+    #main-content { opacity:0; transition: opacity 1s ease 0.4s; }
+    #main-content.visible { opacity:1; }
+
+    /* NAV */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:100;
+      display: flex; justify-content:space-between; align-items:center;
+      padding: 20px 56px;
+      background: rgba(6,8,15,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(123,207,255,0.1);
+    }
+    .logo { font-family:'Cinzel',serif; font-size:15px; font-weight:900; color:var(--gold); letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; }
+    .logo span { color:var(--text); font-weight:400; }
+    nav ul { display:flex; gap:36px; list-style:none; }
+    nav a { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); text-decoration:none; letter-spacing:0.15em; text-transform:uppercase; transition:color 0.25s; }
+    nav a:hover { color:var(--ice); }
+
+    /* HERO */
     .story-hero {
       position: relative;
       height: 70vh;
@@ -36,115 +203,417 @@
       align-items: center;
       text-align: center;
       padding-bottom: 80px;
-      /* Volibear'in orijinal Riot Splash Art'ı arka plan olarak çekiliyor */
-      background: url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Volibear_0.jpg') center top / cover no-radius;
+      overflow: hidden;
     }
-    
-    /* Resmin altına doğru koyulaşan degrade efekti */
-    .story-hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(6,8,15,0.2) 0%, rgba(6,8,15,0.8) 60%, var(--bg) 100%);
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Volibear_0.jpg') center top / cover no-repeat;
+      transform: scale(1.05);
+      animation: heroDrift 18s ease-in-out infinite alternate;
+    }
+    @keyframes heroDrift {
+      from { transform: scale(1.05) translateY(0); }
+      to   { transform: scale(1.12) translateY(-3%); }
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(6,8,15,0.2) 0%, rgba(6,8,15,0.65) 55%, var(--bg) 100%);
+    }
+
+    /* Canvas yıldırım hero */
+    #heroCanvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
     }
 
     .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-      padding: 0 20px;
-      animation: fadeUp 1s ease-out forwards;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      position: relative; z-index: 2;
+      max-width: 800px; padding: 0 20px;
     }
 
     .region-tag {
-      font-family: 'Cinzel', serif; font-size: 12px; color: var(--freljord); letter-spacing: 0.3em; text-transform: uppercase;
-      display: inline-block; padding: 6px 16px; border: 1px solid rgba(123, 207, 255, 0.3); border-radius: 2px; margin-bottom: 20px;
-      background: var(--freljord-bg);
+      font-family: 'Cinzel', serif; font-size: 12px; color: var(--ice);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      display: inline-block; padding: 6px 18px;
+      border: 1px solid rgba(123,207,255,0.28); border-radius: 2px;
+      background: rgba(123,207,255,0.06); margin-bottom: 22px;
+      animation: tagIn 0.6s ease-out 0.2s both;
+    }
+    @keyframes tagIn {
+      from { opacity:0; transform:translateY(8px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    .story-title { font-family: 'Cinzel', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 900; line-height: 1.1; color: #fff; text-shadow: 0 0 40px rgba(123,207,255,0.4); margin-bottom: 12px; }
-    .story-subtitle { font-size: 20px; color: var(--freljord); font-style: italic; font-family: 'Cinzel', serif; letter-spacing: 0.1em; }
+    .story-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(38px, 5.5vw, 72px);
+      font-weight: 900; line-height: 1.08;
+      color: #fff;
+      text-shadow: 0 0 50px rgba(123,207,255,0.35), 0 4px 24px rgba(0,0,0,0.7);
+      margin-bottom: 14px;
+      animation: tagIn 0.7s ease-out 0.4s both;
+    }
 
-    /* HİKAYE METNİ (OKUMA ALANI) */
+    .story-subtitle {
+      font-size: 18px; color: var(--ice); font-style: italic;
+      font-family: 'Cinzel', serif; letter-spacing: 0.1em; opacity: 0.85;
+      animation: tagIn 0.7s ease-out 0.6s both;
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute; bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 2; animation: hintFloat 2.2s ease-in-out infinite;
+    }
+    @keyframes hintFloat {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(8px); }
+    }
+    .scroll-line { width:1px; height:44px; background:linear-gradient(var(--ice),transparent); box-shadow:0 0 6px var(--ice); }
+    .scroll-text { font-family:'Cinzel',serif; font-size:9px; color:var(--muted); letter-spacing:0.28em; text-transform:uppercase; }
+
+    /* ARTICLE */
     .story-article {
+      position: relative; max-width: 760px;
+      margin: 0 auto; padding: 60px 24px 110px;
+    }
+
+    .article-rune { text-align:center; font-size:26px; color:var(--ice); margin-bottom:44px; opacity:0.45; letter-spacing:0.3em; }
+
+    .story-article p:first-of-type::first-letter {
+      float: left; font-family: 'Cinzel', serif;
+      font-size: 88px; line-height: 62px;
+      padding-top: 4px; padding-right: 13px; padding-left: 3px;
+      color: var(--gold); text-shadow: 0 0 24px rgba(200,151,42,0.35);
+    }
+
+    .story-article p {
+      margin-bottom: 30px; font-size: 20px; line-height: 1.88;
+      color: #ddd5c5; text-align: justify;
+      opacity: 0; transform: translateY(18px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .story-article p.visible { opacity:1; transform:translateY(0); }
+
+    blockquote {
+      margin: 52px 0; padding: 34px 42px;
+      border-left: 2px solid var(--ice);
+      background: linear-gradient(90deg, rgba(123,207,255,0.05), transparent 80%);
+      font-size: 23px; font-style: italic;
+      color: #fff; font-family: 'Cinzel', serif; line-height: 1.6;
       position: relative;
-      z-index: 1;
+      opacity: 0; transform: translateX(-18px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    blockquote.visible { opacity:1; transform:translateX(0); }
+    blockquote::before {
+      content:'❝'; position:absolute; top:-18px; left:18px;
+      font-size:44px; color:rgba(123,207,255,0.18); font-style:normal; line-height:1;
+    }
+
+    .chapter-break {
+      display:flex; align-items:center; gap:18px;
+      margin: 52px 0; color:var(--muted); font-size:13px; letter-spacing:0.28em;
+    }
+    .chapter-break::before, .chapter-break::after {
+      content:''; flex:1; height:1px;
+      background: linear-gradient(90deg, transparent, rgba(123,207,255,0.18), transparent);
+    }
+
+    .back-nav { text-align:center; margin-top:72px; border-top:1px solid rgba(255,255,255,0.05); padding-top:56px; }
+
+    .back-btn {
+      display:inline-flex; align-items:center; gap:12px;
+      padding:15px 40px; border:1px solid rgba(200,151,42,0.4);
+      color:var(--gold); font-family:'Cinzel',serif; font-size:12px;
+      letter-spacing:0.2em; text-transform:uppercase; text-decoration:none;
+      transition: all 0.35s; position:relative; overflow:hidden;
+    }
+    .back-btn::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(200,151,42,0.09), transparent);
+      transform: translateX(-100%); transition: transform 0.4s ease;
+    }
+    .back-btn:hover { border-color:var(--gold); color:var(--gold2); letter-spacing:0.27em; }
+    .back-btn:hover::before { transform:translateX(0); }
+
+    footer { border-top:1px solid rgba(200,151,42,0.12); padding:46px 20px; text-align:center; }
+    .footer-logo { font-family:'Cinzel',serif; font-size:18px; font-weight:900; color:var(--gold); letter-spacing:0.1em; margin-bottom:10px; }
+    .footer-copy { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); letter-spacing:0.1em; }
+
+    /* ── KAR PARÇACIKLARI ── */
+    #snow-container {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      border-radius: 50%;
+      background: white;
+      opacity: 0;
+      animation: snowFall linear infinite;
+    }
+    @keyframes snowFall {
+      0%   { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+      5%   { opacity: 0.7; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(105vh) translateX(var(--drift)) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── SOSYAL MEDYA ── */
+    .social-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border: 1px solid rgba(200,151,42,0.25);
+      border-radius: 3px;
+      color: var(--muted);
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+      background: rgba(255,255,255,0.02);
+    }
+    .social-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,151,42,0.05); transform: translateY(-2px); }
+    .social-link svg { width:15px; height:15px; fill:currentColor; flex-shrink:0; }
+
+    /* ── YORUMLAR ── */
+    .comments-section {
       max-width: 760px;
       margin: 0 auto;
-      padding: 40px 20px 100px;
+      padding: 0 24px 100px;
     }
 
-    /* Dergi tarzı büyük ilk harf (Drop Cap) efekti */
-    .story-article p:first-of-type::first-letter {
-      float: left;
+    .comments-title {
       font-family: 'Cinzel', serif;
-      font-size: 84px;
-      line-height: 60px;
-      padding-top: 4px;
-      padding-right: 12px;
-      padding-left: 3px;
-      color: var(--gold);
-      text-shadow: 0 0 20px rgba(200,151,42,0.3);
-    }
-
-    .story-article p { margin-bottom: 28px; font-size: 20px; line-height: 1.85; color: #e0d7c8; text-align: justify; }
-
-    /* Vurgulu alıntılar için tasarım */
-    blockquote {
-      margin: 48px 0;
-      padding: 32px 40px;
-      border-left: 2px solid var(--freljord);
-      background: linear-gradient(90deg, rgba(123, 207, 255, 0.05), transparent);
-      font-size: 24px;
-      font-style: italic;
+      font-size: 20px;
+      font-weight: 600;
       color: #fff;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .comments-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(123,207,255,0.2), transparent);
+    }
+
+    .comments-sub {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 36px;
+    }
+
+    /* Yorum formu */
+    .comment-form {
+      background: rgba(11,16,32,0.8);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px;
+      margin-bottom: 40px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
       font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--ice);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
     }
 
-    /* GERİ DÖN BUTONU */
-    .back-nav { text-align: center; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 40px; }
-    .back-btn {
-      display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); 
-      color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; 
-      text-decoration: none; transition: all 0.3s;
+    .form-group input,
+    .form-group textarea {
+      background: rgba(4,6,14,0.8);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 17px;
+      outline: none;
+      transition: border-color 0.25s;
+      resize: none;
     }
-    .back-btn:hover { border-color: var(--gold); color: var(--gold2); background: rgba(200,151,42,0.07); box-shadow: 0 0 20px rgba(200,151,42,0.2); gap: 16px; }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: rgba(123,207,255,0.4); }
+    .form-group textarea { min-height: 100px; }
 
-    /* FOOTER */
-    footer { border-top: 1px solid rgba(200,151,42,0.12); padding: 48px 20px; text-align: center; }
-    .footer-logo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 12px; }
-    .footer-copy { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      background: rgba(123,207,255,0.08);
+      border: 1px solid rgba(123,207,255,0.3);
+      border-radius: 3px;
+      color: var(--ice);
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 6px;
+    }
+    .submit-btn:hover { background: rgba(123,207,255,0.14); border-color: var(--ice); transform: translateY(-1px); }
 
+    /* Yorum listesi */
+    .comment-list { display: flex; flex-direction: column; gap: 20px; }
+
+    .comment-card {
+      background: rgba(11,16,32,0.6);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 22px 26px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .comment-card.visible { opacity:1; transform:translateY(0); }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .comment-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ice), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .comment-meta { flex:1; }
+    .comment-name {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .comment-date { font-size: 12px; color: var(--muted); font-style: italic; }
+
+    .comment-region {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.15em;
+      border: 1px solid rgba(123,207,255,0.25);
+      color: var(--ice);
+      background: rgba(123,207,255,0.06);
+    }
+
+    .comment-body { font-size: 17px; color: #ccc5b5; line-height: 1.7; }
+
+    .comment-success {
+      display: none;
+      text-align: center;
+      padding: 16px;
+      color: var(--ice);
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding:16px 20px; }
+      nav ul { gap:20px; }
+      .story-article { padding:40px 20px 80px; }
+      blockquote { padding:24px; font-size:19px; }
+      .form-row { grid-template-columns: 1fr; }
+      .comments-section { padding: 0 20px 80px; }
+    }
   </style>
 </head>
 <body>
 
+<!-- ── INTRO ── -->
+<div id="intro">
+  <div class="intro-clouds"></div>
+  <canvas id="lightningCanvas"></canvas>
+  <div id="flash"></div>
+  <div class="rune-ring"></div>
+  <div class="rune-ring"></div>
+  <div class="rune-ring"></div>
+  <div class="intro-content">
+    <span class="intro-icon">⚡</span>
+    <div class="intro-title">VOLİBEAR</div>
+    <div class="intro-sub">Bin Yaralı Ayı · Freljord'un Fırtınası</div>
+    <div class="intro-skip" onclick="skipIntro()">Geç →</div>
+  </div>
+  <div id="introProgress"></div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="main-content">
   <nav>
     <a href="index.html" class="logo">Runeterra <span>Günlükleri</span></a>
-    <ul>
-      <li><a href="index.html">Tüm Efsaneler</a></li>
-    </ul>
+    <ul><li><a href="index.html">Tüm Efsaneler</a></li></ul>
   </nav>
 
   <header class="story-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <canvas id="heroCanvas"></canvas>
     <div class="hero-content">
       <div class="region-tag">Freljord</div>
       <h1 class="story-title">Fırtınanın Pençeleri</h1>
       <div class="story-subtitle">Bin Yaralı Ayı • Volibear</div>
     </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <div class="scroll-text">Aşağı Kaydır</div>
+    </div>
   </header>
 
   <main class="story-article">
+    <div class="article-rune">⚡ ✦ ⚡</div>
+
     <p>Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu; yaklaşan fırtınanın, vahşi doğanın ta kendisinin habercisiydi. Gökyüzü kara bulutlarla kaplanıp şimşekler buzlu dağları aydınlattığında, Ursine kabilesi neyin uyandığını biliyordu. Kardeşi Ornn'un merhametini reddeden, Freljord'un kan ve vahşetle beslenen o kadim ruhu yeniden ayağa kalkıyordu.</p>
-    
+
     <p>Ona Volibear diyorlardı. İnsanlar zayıflamış, taştan kalelere ve sıcak ocaklara sığınmıştı. Oysa o, Freljord'un bu evcilleştirilmiş haline öfke duyuyordu. Onun gözünde gerçek güç, fırtınaya karşı durabilmekte değil, fırtınanın ta kendisi olabilmekteydi.</p>
 
     <blockquote>"Benim adımla gökler gürler! Benim adımla dağlar yarılır! İnsanlar sadece merhamet dilenmeyi bilir, bense onlara fırtınanın öfkesini getireceğim!"</blockquote>
+
+    <div class="chapter-break">✦ ✦ ✦</div>
 
     <p>Pek çok savaşçı onu durdurmak için dağlara tırmandı. Kimisi elinde Gerçek Buz'dan yapılmış silahlar taşıyordu, kimisi ise güneyin ateş büyüsüyle donanmıştı. Ancak Volibear'in kükremesi bulutları yardığında ve pençelerinden yıldırımlar fışkırdığında, hepsi birer birer toprağa düştü. O sadece devasa bir ayı değildi; o, Freljord'un dizginlenemez ilkel gücüydü.</p>
 
@@ -159,6 +628,313 @@
     <div class="footer-logo">Runeterra Günlükleri</div>
     <div class="footer-copy">© 2026 Mehmet Kadir Erten · Tüm hakları saklıdır</div>
   </footer>
+</div>
 
+<script>
+// ════════════════════════════════════════
+//  LIGHTNING ENGINE
+// ════════════════════════════════════════
+
+class LightningEngine {
+  constructor(canvas, opts = {}) {
+    this.canvas = canvas;
+    this.ctx    = canvas.getContext('2d');
+    this.opts   = Object.assign({
+      color:      '#7bcfff',
+      color2:     '#ffffff',
+      glowColor:  'rgba(123,207,255,',
+      maxDepth:   4,
+      roughness:  0.5,
+      branchProb: 0.35,
+      minLen:     60,
+    }, opts);
+    this.bolts = [];
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+  }
+
+  resize() {
+    this.canvas.width  = this.canvas.offsetWidth;
+    this.canvas.height = this.canvas.offsetHeight;
+  }
+
+  // Midpoint displacement — rekursif yıldırım oluşturucu
+  _buildSegments(x1, y1, x2, y2, depth, roughness) {
+    if (depth === 0) return [[x1,y1,x2,y2]];
+    const mx = (x1+x2)/2 + (Math.random()-0.5) * roughness;
+    const my = (y1+y2)/2 + (Math.random()-0.5) * roughness * 0.4;
+    const left  = this._buildSegments(x1,y1,mx,my, depth-1, roughness*0.6);
+    const right = this._buildSegments(mx,my,x2,y2, depth-1, roughness*0.6);
+    return [...left, ...right];
+  }
+
+  // Tek bir bolt oluştur
+  _createBolt(x1, y1, x2, y2, depth, width, alpha, isMain) {
+    const roughness = Math.hypot(x2-x1,y2-y1) * this.opts.roughness;
+    const segs = this._buildSegments(x1,y1,x2,y2, depth, roughness);
+    const bolt = { segs, width, alpha, isMain, branches:[], life:1, decay: 0.08+Math.random()*0.06 };
+
+    // Dallanma
+    if (depth > 1) {
+      segs.forEach((seg, i) => {
+        if (i > 0 && Math.random() < this.opts.branchProb) {
+          const [bx1,by1,bx2,by2] = seg;
+          const midX = (bx1+bx2)/2, midY = (by1+by2)/2;
+          const ang  = Math.atan2(by2-by1, bx2-bx1) + (Math.random()-0.5)*1.2;
+          const len  = Math.hypot(bx2-bx1,by2-by1) * (1.2+Math.random()*1.0);
+          const ex   = midX + Math.cos(ang)*len;
+          const ey   = midY + Math.sin(ang)*len;
+          bolt.branches.push(
+            this._createBolt(midX,midY,ex,ey, depth-1, width*0.5, alpha*0.7, false)
+          );
+        }
+      });
+    }
+    return bolt;
+  }
+
+  // Yeni yıldırım çak
+  strike(x1, y1, x2, y2, depth, width) {
+    const bolt = this._createBolt(x1, y1, x2, y2,
+      depth  || 4,
+      width  || (1.5+Math.random()*2),
+      1, true
+    );
+    this.bolts.push(bolt);
+    return bolt;
+  }
+
+  // Çizim
+  _drawBolt(bolt) {
+    const ctx = this.ctx;
+    const a   = bolt.life * bolt.alpha;
+    if (a <= 0) return;
+
+    bolt.segs.forEach(([x1,y1,x2,y2]) => {
+      // Dış glow katmanı
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = this.opts.glowColor + (a*0.25) + ')';
+      ctx.lineWidth   = bolt.width * 8;
+      ctx.lineCap     = 'round';
+      ctx.filter      = 'blur(6px)';
+      ctx.stroke();
+      ctx.restore();
+
+      // Orta glow
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = this.opts.glowColor + (a*0.55) + ')';
+      ctx.lineWidth   = bolt.width * 3.5;
+      ctx.lineCap     = 'round';
+      ctx.filter      = 'blur(2px)';
+      ctx.stroke();
+      ctx.restore();
+
+      // Ana çizgi (beyaz merkez)
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = `rgba(255,255,255,${a * (bolt.isMain ? 0.95 : 0.7)})`;
+      ctx.lineWidth   = bolt.isMain ? bolt.width : bolt.width * 0.6;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    bolt.branches.forEach(b => this._drawBolt(b));
+  }
+
+  // Frame güncelle
+  tick() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.bolts = this.bolts.filter(b => b.life > 0);
+    this.bolts.forEach(bolt => {
+      this._drawBolt(bolt);
+      bolt.life -= bolt.decay;
+      bolt.branches.forEach(b => { b.life -= b.decay; });
+    });
+
+    return this.bolts.length > 0;
+  }
+}
+
+// ════════════════════════════════════════
+//  INTRO
+// ════════════════════════════════════════
+const introCanvas = document.getElementById('lightningCanvas');
+const introEngine = new LightningEngine(introCanvas, {
+  roughness: 0.55, branchProb: 0.4, maxDepth: 4
+});
+
+const flashEl       = document.getElementById('flash');
+const progressEl    = document.getElementById('introProgress');
+const introDuration = 5000;
+const introStart    = Date.now();
+let   introDone     = false;
+let   introRaf      = null;
+let   introLooping  = false;
+
+// Progress bar: CSS animation ile sürekli RAF yerine
+const progressAnim = progressEl.animate(
+  [{ width: '0%' }, { width: '100%' }],
+  { duration: introDuration, fill: 'forwards', easing: 'linear' }
+);
+progressAnim.onfinish = () => endIntro();
+
+function introLoop() {
+  const hasActive = introEngine.tick();
+  if (hasActive) {
+    introRaf = requestAnimationFrame(introLoop);
+  } else {
+    introLooping = false;
+    introRaf = null;
+  }
+}
+
+function startIntroLoop() {
+  if (!introLooping) {
+    introLooping = true;
+    introRaf = requestAnimationFrame(introLoop);
+  }
+}
+
+// Yıldırım çakma zamanlaması
+function scheduleStrike() {
+  if (introDone) return;
+
+  const W = introCanvas.width, H = introCanvas.height;
+  const isBig = Math.random() > 0.4;
+
+  // Başlangıç noktası: üst bölge
+  const x1 = W * (0.15 + Math.random() * 0.7);
+  const y1 = H * (Math.random() * 0.15);
+
+  // Bitiş noktası: orta-alt bölge
+  const x2 = x1 + (Math.random()-0.5) * W * 0.35;
+  const y2 = H * (0.4 + Math.random() * 0.45);
+
+  const depth = isBig ? 4 : 3;
+  const width = isBig ? (2.5+Math.random()*2) : (1+Math.random()*1.5);
+
+  introEngine.strike(x1, y1, x2, y2, depth, width);
+  startIntroLoop();
+
+  // Flaş efekti
+  if (isBig) {
+    const intensity = 0.55 + Math.random() * 0.35;
+    flashEl.style.transition = 'none';
+    flashEl.style.opacity = intensity;
+    // Çift çakma (gerçek yıldırım gibi)
+    setTimeout(() => {
+      flashEl.style.transition = 'opacity 0.06s';
+      flashEl.style.opacity = 0.05;
+    }, 70);
+    setTimeout(() => {
+      flashEl.style.transition = 'none';
+      flashEl.style.opacity = intensity * 0.65;
+      // İkinci çakma sırasında dal yıldırım ekle
+      introEngine.strike(
+        x1 + (Math.random()-0.5)*80, y1,
+        x2 + (Math.random()-0.5)*120, y2 * 0.85,
+        3, width*0.6
+      );
+      startIntroLoop();
+    }, 130);
+    setTimeout(() => {
+      flashEl.style.transition = 'opacity 0.45s';
+      flashEl.style.opacity = 0;
+    }, 220);
+  } else {
+    flashEl.style.transition = 'none';
+    flashEl.style.opacity = 0.08 + Math.random()*0.1;
+    setTimeout(() => {
+      flashEl.style.transition = 'opacity 0.3s';
+      flashEl.style.opacity = 0;
+    }, 80);
+  }
+
+  // Sonraki çakma
+  setTimeout(scheduleStrike, 700 + Math.random() * 1100);
+}
+setTimeout(scheduleStrike, 400);
+
+function endIntro() {
+  if (introDone) return;
+  introDone = true;
+  progressAnim.cancel();
+  if (introRaf) { cancelAnimationFrame(introRaf); introRaf = null; }
+
+  // Final büyük flaş
+  flashEl.style.transition = 'none';
+  flashEl.style.opacity = 0.85;
+  setTimeout(() => {
+    flashEl.style.transition = 'opacity 0.6s';
+    flashEl.style.opacity = 0;
+  }, 100);
+
+  setTimeout(() => {
+    document.getElementById('intro').classList.add('exiting');
+    document.getElementById('main-content').classList.add('visible');
+    setTimeout(() => { document.getElementById('intro').style.display='none'; }, 1000);
+  }, 280);
+}
+
+function skipIntro() { endIntro(); }
+
+// ════════════════════════════════════════
+//  HERO CANVAS YILDIRIMLARİ
+// ════════════════════════════════════════
+const heroCanvas = document.getElementById('heroCanvas');
+const heroEngine = new LightningEngine(heroCanvas, {
+  roughness: 0.5, branchProb: 0.32, maxDepth: 3,
+  glowColor: 'rgba(123,207,255,'
+});
+
+let heroRaf     = null;
+let heroLooping = false;
+
+function heroLoop() {
+  const hasActive = heroEngine.tick();
+  if (hasActive) {
+    heroRaf = requestAnimationFrame(heroLoop);
+  } else {
+    heroLooping = false;
+    heroRaf = null;
+  }
+}
+
+function startHeroLoop() {
+  if (!heroLooping) {
+    heroLooping = true;
+    heroRaf = requestAnimationFrame(heroLoop);
+  }
+}
+
+function scheduleHeroStrike() {
+  const W = heroCanvas.offsetWidth, H = heroCanvas.offsetHeight;
+  if (Math.random() > 0.35) {
+    const x1 = W * (0.1 + Math.random() * 0.8);
+    heroEngine.strike(x1, 0, x1+(Math.random()-0.5)*W*0.25, H*(0.4+Math.random()*0.4), 3, 1+Math.random()*1.2);
+    startHeroLoop();
+  }
+  setTimeout(scheduleHeroStrike, 1800 + Math.random() * 3500);
+}
+setTimeout(scheduleHeroStrike, 3000);
+
+// ════════════════════════════════════════
+//  SCROLL REVEAL
+// ════════════════════════════════════════
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i*90);
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.story-article p, blockquote').forEach(el => revObs.observe(el));
+</script>
 </body>
 </html>

@@ -151,43 +151,31 @@
     .card-link { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: gap 0.2s, color 0.3s; margin-top: 15px; }
     .story-card:hover .card-link { gap: 14px; color: var(--rc); }
 
-    /* =========================================
-       SİNEMATİK GEÇİŞ ARAYÜZÜ (AKICI HALE GELDİ)
-       ========================================= */
+    /* SİNEMATİK GEÇİŞ ARAYÜZÜ */
     #page-transition-overlay { position: fixed; inset: 0; z-index: 9999999; pointer-events: none; visibility: hidden; display: flex; justify-content: center; align-items: center; }
     
     .transition-splash {
       position: absolute; inset: 0;
       background-position: center top; background-size: cover; background-repeat: no-repeat;
-      
-      /* AKICI BAŞLANGIÇ: Biraz büyük, bulanık, parlak ve hafif aşağıda */
       opacity: 0;
       transform: scale(1.15) translateY(20px);
       filter: blur(5px) brightness(1.2);
-      
-      /* AKICI GEÇİŞ SÜRESİ VE TÜRÜ (Bütün efektler ayrı ayrı anime olur) */
-      transition:
-        opacity 0.7s ease-out,
-        transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        filter 1s ease-out;
+      transition: opacity 0.7s ease-out, transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 1s ease-out;
     }
 
-    #page-transition-overlay.active .transition-splash {
-      /* AKICI BİTİŞ: Normal boyut, net, normal parlaklık ve merkezde */
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      filter: blur(0px) brightness(1);
+    /* YILDIRIM ŞİMŞEK EFEKTİ (SİYAH BEYAZ SİLÜET) */
+    .transition-splash.lightning-flash {
+      opacity: 1 !important;
+      filter: grayscale(1) brightness(5) contrast(200%) !important; /* Bembeyaz şimşek etkisi */
+      transform: scale(1.02) !important;
+      transition: none !important; /* Çakma anlık olmalı */
     }
-    
-    /* Üstüne inen sinematik siyah ekran */
-    .transition-blackout {
-      position: absolute; inset: 0; background: #000;
-      opacity: 0; transition: opacity 1s ease-in-out;
-    }
-    
-    /* Aktif olduğunda animasyonları başlatır */
+
     #page-transition-overlay.active { visibility: visible; pointer-events: all; }
-    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; } /* Siyah ekran iner */
+    #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px) brightness(1); }
+    
+    .transition-blackout { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.8s ease-in-out; }
+    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; }
 
     footer { position: relative; z-index: 1; border-top: 1px solid rgba(200,151,42,0.12); padding: 48px 56px; text-align: center; }
     .footer-logo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 12px; }
@@ -204,6 +192,12 @@
   </div>
   <audio id="hover-sound" preload="auto">
     <source src="lol-hover.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="volibear-voice" preload="auto">
+    <source src="volibear-voice.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="lightning-sfx" preload="auto">
+    <source src="lightning.mp3" type="audio/mpeg">
   </audio>
 
   <div class="controls-wrapper">
@@ -283,7 +277,6 @@
       entries.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); });
     }, { threshold: 0.08 });
 
-    // (Şampiyon verileri buraya gelecek - Bir önceki kodla aynı)
     const championsData = [
       { id: "Volibear", name: "Volibear", epic: "Fırtınanın Pençeleri", regionClass: "freljord", regionDisplay: "Freljord", date: "15 Mayıs 2026", excerpt: "Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu; yaklaşan fırtınanın habercisiydi..." },
       { id: "Garen", name: "Garen", epic: "Demacia'nın Kudreti", regionClass: "demacia", regionDisplay: "Demacia", date: "10 Mayıs 2026", excerpt: "Demacia'nın görkemli surları, ancak onları koruyan yürekler kadar güçlüdür." },
@@ -292,7 +285,7 @@
       { id: "Jinx", name: "Jinx", epic: "Deliliğin Silahşoru", regionClass: "zaun", regionDisplay: "Zaun", date: "25 Nisan 2026", excerpt: "Kurallar yıkılmak, binalar ise patlatılmak içindir!" },
       { id: "Thresh", name: "Thresh", epic: "Zincirli Gardiyan", regionClass: "shadow", regionDisplay: "Shadow Isles", date: "20 Nisan 2026", excerpt: "\"Huzur mu? Ne sıkıcı.\"" },
       { id: "MissFortune", name: "Miss Fortune", epic: "Ödül Avcısı", regionClass: "bilgewater", regionDisplay: "Bilgewater", date: "16 Nisan 2026", excerpt: "Bilgewater'ın tehlikeli sularında güvenebileceğin tek şey tabancalarındır." },
-      { id: "Azir", name: "Azir", epic: "Kumların İmparatoru", regionClass: "shurima", regionDisplay: "Shurima", date: "11 Nisan 2026", excerpt: "Binlerce yıllık uykusundan uyanan Shurima, güneşin altında yükselecek." },
+      { id: "Azir", name: "Azir", epic: "Kumların İmparatoru", regionClass: "shurima", regionDisplay: "Shurima", date: "11 Nisan 2026", excerpt: "Binlerce yıllık uykusundan uyanan Shurima, güneşin altında bir kez daha yükselecek." },
       { id: "Pantheon", name: "Pantheon", epic: "Eğilmez Mızrak", regionClass: "targon", regionDisplay: "Targon", date: "07 Nisan 2026", excerpt: "İlahların gücü bile bir ölümlünün iradesi karşısında boyun eğebilir." },
       { id: "Kaisa", name: "Kai'Sa", epic: "Hiçliğin Kızı", regionClass: "void", regionDisplay: "Hiçlik", date: "01 Nisan 2026", excerpt: "Canavarların arasında hayatta kalmak için onlardan biri olmalısın." },
       { id: "Vi", name: "Vi", epic: "Piltover Fedaisi", regionClass: "piltover", regionDisplay: "Piltover", date: "28 Mart 2026", excerpt: "Sorunları çözmenin pek çok yolu vardır ama Vi için en etkilisi yumruklardır." },
@@ -317,16 +310,52 @@
       { id: "Katarina", name: "Katarina", epic: "Uğursuz Bıçak", regionClass: "noxus", regionDisplay: "Noxus", date: "10 Aralık 2025", excerpt: "Kararlarında tereddüt edenler savaş alanında kanamaya mahkumdur." }
     ];
 
+    /* 2. SİNEMATİK VOLIBEAR GEÇİŞ SİSTEMİ */
     function triggerCinematicTransition(e, pageLink, championId) {
       e.preventDefault();
       const overlay = document.getElementById('page-transition-overlay');
       const splash = document.getElementById('transition-splash');
+      
+      // Resim ayarlanıyor
       splash.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championId}_0.jpg')`;
       overlay.classList.add('active');
-      setTimeout(() => {
-        overlay.classList.add('blackout');
-        setTimeout(() => window.location.href = pageLink, 800);
-      }, 1200);
+
+      if (championId === 'Volibear') {
+        const voice = document.getElementById('volibear-voice');
+        const lightning = document.getElementById('lightning-sfx');
+        
+        // Adım 1: Splash art gözükürken ekran kararmaya başlar
+        setTimeout(() => {
+          overlay.classList.add('blackout'); // Ekran kararıyor
+          if(isSfxEnabled) { voice.volume = 0.4; voice.play(); } // Replik girer
+        }, 1000);
+
+        // Adım 2: İlk Yıldırım ve Siyah/Beyaz Silüet (Karanlığın içinde)
+        setTimeout(() => {
+          if(isSfxEnabled) { lightning.currentTime = 0; lightning.play(); }
+          splash.classList.add('lightning-flash');
+          setTimeout(() => splash.classList.remove('lightning-flash'), 150);
+        }, 2000);
+
+        // Adım 3: İkinci Yıldırım (1 saniye sonra)
+        setTimeout(() => {
+          if(isSfxEnabled) { lightning.currentTime = 0; lightning.play(); }
+          splash.classList.add('lightning-flash');
+          setTimeout(() => splash.classList.remove('lightning-flash'), 150);
+        }, 3100);
+
+        // Final: Yönlendirme
+        setTimeout(() => {
+          window.location.href = pageLink;
+        }, 4500);
+
+      } else {
+        // Diğer şampiyonlar için standart akıcı geçiş
+        setTimeout(() => {
+          overlay.classList.add('blackout');
+          setTimeout(() => window.location.href = pageLink, 800);
+        }, 1200);
+      }
     }
 
     const grid = document.getElementById('main-grid');
@@ -336,11 +365,10 @@
         const card = document.createElement('div');
         const pageLink = champ.id.toLowerCase() + '.html';
         card.className = `story-card ${champ.regionClass} fade-in`;
-        card.dataset.index = index;
         card.innerHTML = `
           <div class="card-region-bar"></div>
           <div class="card-body">
-            <div class="card-meta"><span class="card-region">${champ.regionDisplay}</span><span class="card-date">${champ.date}</span></div>
+            <div class="card-meta"><span class="card-region">${champ.regionDisplay}</span></div>
             <div class="card-content-flex">
               <div class="img-container"><img class="card-hover-img" src="https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/${champ.id}.png" loading="lazy"></div>
               <div class="card-text-wrapper">
@@ -354,11 +382,10 @@
         card.addEventListener('click', (e) => { if(!e.target.classList.contains('card-link')) triggerCinematicTransition(e, pageLink, champ.id); });
         card.querySelector('.card-link').addEventListener('click', (e) => triggerCinematicTransition(e, pageLink, champ.id));
 
-        // SFX: Kartın Üzerine Gelince (Efektler açıksa)
         card.addEventListener('mouseenter', () => {
           if (isSfxEnabled && hoverSound) {
             hoverSound.pause();
-            hoverSound.currentTime = 2.5; // İstediğin 2.5 saniyesi
+            hoverSound.currentTime = 2.5; 
             hoverSound.play().catch(() => {});
           }
         });
@@ -369,30 +396,19 @@
     renderChampions();
 
     /* -------------------------------------------------------------------------
-       2. SES KONTROLLERİ (SES SEVİYELERİ DÜŞÜRÜLDÜ)
+       3. SES KONTROLLERİ
        ------------------------------------------------------------------------- */
-    let ytPlayer;
-    let isMusicPlaying = false;
-    let isSfxEnabled = true;
+    let ytPlayer, isMusicPlaying = false, isSfxEnabled = true;
+    const musicBtn = document.getElementById('music-toggle'), sfxBtn = document.getElementById('sfx-toggle'), hoverSound = document.getElementById('hover-sound');
 
-    const musicBtn = document.getElementById('music-toggle');
-    const sfxBtn = document.getElementById('sfx-toggle');
-    const hoverSound = document.getElementById('hover-sound');
-
-    // YouTube API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
+    const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
     window.onYouTubeIframeAPIReady = function() {
       ytPlayer = new YT.Player('youtube-player', {
         height: '200', width: '200', videoId: 'aPf9EcHbWHE',
-        playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'start': 2 },
-        events: {
-          'onReady': (event) => {
-             event.target.setVolume(10); // MÜZİK SESİ %10
-          }
-        }
+        playerVars: { 'autoplay': 0, 'controls': 0, 'start': 2 },
+        events: { 'onReady': (e) => e.target.setVolume(10) }
       });
     };
 
@@ -412,25 +428,16 @@
     });
 
     sfxBtn.addEventListener('click', () => {
-      if (isSfxEnabled) {
-        isSfxEnabled = false;
-        sfxBtn.innerHTML = '<span>🔇</span> <span>Efektler</span>';
-        sfxBtn.classList.remove('active');
-      } else {
-        isSfxEnabled = true;
-        sfxBtn.innerHTML = '<span>🔊</span> <span>Efektler</span>';
-        sfxBtn.classList.add('active');
-      }
+      isSfxEnabled = !isSfxEnabled;
+      sfxBtn.innerHTML = isSfxEnabled ? '<span>🔊</span> <span>Efektler</span>' : '<span>🔇</span> <span>Efektler</span>';
+      sfxBtn.classList.toggle('active');
     });
 
-    // Hover Efekt Ses Ayarı
-    hoverSound.volume = 0.15; // EFEKT SESİ %15
-    hoverSound.addEventListener('timeupdate', function() {
-      if (this.currentTime >= 9.0) this.pause(); // 9.0 sn'de durdur
-    });
+    hoverSound.volume = 0.15;
+    hoverSound.addEventListener('timeupdate', function() { if (this.currentTime >= 9.0) this.pause(); });
 
     /* -------------------------------------------------------------------------
-       3. FİLTRELEME
+       4. FİLTRELEME
        ------------------------------------------------------------------------- */
     const filterSelect = document.getElementById('filter-region');
     const sortSelect = document.getElementById('sort-order');

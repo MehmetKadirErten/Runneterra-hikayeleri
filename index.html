@@ -181,9 +181,42 @@
       .control-box { justify-content: space-between; }
       .music-btn { bottom: 20px; right: 20px; padding: 10px 18px; }
     }
+
+    /* =========================================
+       SİNEMATİK GEÇİŞ ARAYÜZÜ (YENİ EKLENDİ)
+       ========================================= */
+    #page-transition-overlay {
+      position: fixed; inset: 0; z-index: 9999999;
+      pointer-events: none; visibility: hidden;
+      display: flex; justify-content: center; align-items: center;
+    }
+    
+    /* Arkadaki tam boy (Splash Art) görseli */
+    .transition-splash {
+      position: absolute; inset: 0;
+      background-position: center top; background-size: cover; background-repeat: no-repeat;
+      opacity: 0; transform: scale(1.1); /* Başlangıçta biraz büyük (Zoom effect için) */
+      transition: opacity 0.8s ease-out, transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Üstüne inen sinematik siyah ekran */
+    .transition-blackout {
+      position: absolute; inset: 0; background: #000;
+      opacity: 0; transition: opacity 0.8s ease-in-out;
+    }
+
+    /* Aktif olduğunda animasyonları başlatır */
+    #page-transition-overlay.active { visibility: visible; pointer-events: all; }
+    #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1); } /* Resim netleşip küçülür (zoom-out) */
+    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; } /* Siyah ekran iner */
   </style>
 </head>
 <body>
+
+  <div id="page-transition-overlay">
+    <div class="transition-splash" id="transition-splash"></div>
+    <div class="transition-blackout" id="transition-blackout"></div>
+  </div>
 
   <div style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0; pointer-events: none; z-index: -99;">
     <div id="youtube-player"></div>
@@ -372,6 +405,31 @@
 
     const grid = document.getElementById('main-grid');
 
+    // SİNEMATİK GEÇİŞ FONKSİYONU
+    function triggerCinematicTransition(e, pageLink, championId) {
+      e.preventDefault(); // Anında geçişi engelle
+      
+      const overlay = document.getElementById('page-transition-overlay');
+      const splash = document.getElementById('transition-splash');
+      
+      // Şampiyonun büyük splash art görselini arka plana çek
+      splash.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championId}_0.jpg')`;
+      
+      // Animasyonu başlat (Görsel belirecek)
+      overlay.classList.add('active');
+      
+      // 1.2 saniye sonra karartmayı (blackout) başlat
+      setTimeout(() => {
+        overlay.classList.add('blackout');
+        
+        // Ekran tamamen karardıktan sonra (0.8s) diğer sayfaya yönlendir
+        setTimeout(() => {
+          window.location.href = pageLink;
+        }, 800);
+        
+      }, 1200);
+    }
+
     function renderChampions() {
       grid.innerHTML = '';
       
@@ -407,12 +465,19 @@
           </div>
         `;
         
+        // Karta tıklandığında sinematik geçişi başlat
         card.addEventListener('click', (e) => {
           if(!e.target.classList.contains('card-link')) {
-            window.location.href = pageLink;
+            triggerCinematicTransition(e, pageLink, champ.id);
           }
         });
-        
+
+        // "Okumaya Devam Et" linkine tıklandığında sinematik geçişi başlat
+        const readMoreLink = card.querySelector('.card-link');
+        readMoreLink.addEventListener('click', (e) => {
+          triggerCinematicTransition(e, pageLink, champ.id);
+        });
+
         grid.appendChild(card);
       });
       
@@ -421,8 +486,17 @@
 
     renderChampions();
 
+    // GERİ DÖNÜŞTE SİYAH EKRAN KALMAMASI İÇİN GÜVENLİK KODU
+    window.addEventListener('pageshow', (event) => {
+      // Eğer kullanıcı tarayıcıdan "Geri" tuşuna basarsa ekranı temizler
+      if (event.persisted) {
+        const overlay = document.getElementById('page-transition-overlay');
+        overlay.classList.remove('active', 'blackout');
+      }
+    });
+
     /* -------------------------------------------------------------------------
-       2. HOVER (ÜSTÜNE GELİNCE ÇIKAN SES) VE FİLTRELEME İŞLEMLERİ (GÜVENLİ BÖLGE) 
+       2. HOVER (ÜSTÜNE GELİNCE ÇIKAN SES) VE FİLTRELEME İŞLEMLERİ 
        ------------------------------------------------------------------------- */
     const hoverSound = document.getElementById('hover-sound');
     if (hoverSound) {
@@ -430,7 +504,7 @@
       document.querySelectorAll('.interactive-el').forEach(el => {
         el.addEventListener('mouseenter', () => {
           hoverSound.currentTime = 0; 
-          hoverSound.play().catch(() => {}); // Ses engellenirse kodu durdurma
+          hoverSound.play().catch(() => {}); 
         });
       });
     }
@@ -474,21 +548,21 @@
     sortSelect.addEventListener('change', updateGrid);
 
     /* -------------------------------------------------------------------------
-       3. YOUTUBE API (ÖZEL KARANTİNA - ÇÖKSE BİLE SİTEYİ BOZMAZ)
+       3. YOUTUBE API (ÖZEL KARANTİNA)
        ------------------------------------------------------------------------- */
     try {
       const tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
-      document.head.appendChild(tag); // En güvenli ekleme yöntemi
+      document.head.appendChild(tag);
 
       const musicBtn = document.getElementById('music-toggle');
       const musicIcon = musicBtn.querySelector('.music-icon');
       const musicText = musicBtn.querySelector('.music-text');
-      let isMusicPlaying = false; // Müzik durumunu biz takip ediyoruz
+      let isMusicPlaying = false; 
 
       musicBtn.addEventListener('click', () => {
         if (!window.ytPlayer || typeof window.ytPlayer.playVideo !== 'function') {
-          alert("Müzik bağlantısı tarayıcınız tarafından engellendi veya henüz yüklenmedi. Lütfen 1-2 saniye bekleyip tekrar deneyin.");
+          alert("Müzik bağlantısı yükleniyor... Lütfen bekleyip tekrar deneyin.");
           return;
         }
 
@@ -507,7 +581,6 @@
         }
       });
 
-      // YouTube API sistemi hazır olduğunda bu fonksiyonu çağırır
       window.onYouTubeIframeAPIReady = function() {
         window.ytPlayer = new YT.Player('youtube-player', {
           height: '200', 
@@ -518,7 +591,7 @@
             'controls': 0,
             'disablekb': 1,
             'fs': 0,
-            'start': 2 // Salvation kısmı
+            'start': 2
           },
           events: {
             'onReady': function(event) {
@@ -528,7 +601,7 @@
         });
       };
     } catch (error) {
-      console.error("YouTube müzik oynatıcısı yüklenemedi:", error);
+      console.error("YouTube oynatıcı yüklenemedi:", error);
     }
   </script>
 </body>

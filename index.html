@@ -185,7 +185,7 @@
 </head>
 <body>
 
-  <div style="position: absolute; top: -9999px; left: -9999px;">
+  <div style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0; pointer-events: none; z-index: -99;">
     <div id="youtube-player"></div>
   </div>
   
@@ -311,87 +311,6 @@
   </footer>
 
   <script>
-    /* ---------------------------------------------------
-       1. YOUTUBE MÜZİK OYNATICI (IFRAME API) ENTEGRASYONU
-       --------------------------------------------------- */
-    let ytPlayer;
-
-    // YouTube API kodunu sayfaya dinamik olarak ekliyoruz
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // API hazır olduğunda bu fonksiyon otomatik çalışır
-    function onYouTubeIframeAPIReady() {
-      ytPlayer = new YT.Player('youtube-player', {
-        height: '0',
-        width: '0',
-        videoId: 'aPf9EcHbWHE', // Gönderdiğin videonun ID'si
-        playerVars: {
-          'autoplay': 0,
-          'controls': 0,
-          'start': 2 // İstediğin gibi 2. saniyeden ("Salvation" kısmından) başlar
-        },
-        events: {
-          'onReady': onPlayerReady
-        }
-      });
-    }
-
-    function onPlayerReady(event) {
-      event.target.setVolume(30); // Arka plan müziği için sesi %30'a sabitliyoruz
-    }
-
-    /* ---------------------------------------------------
-       2. MÜZİK VE HOVER KONTROLLERİ
-       --------------------------------------------------- */
-    const musicBtn = document.getElementById('music-toggle');
-    const hoverSound = document.getElementById('hover-sound');
-    const musicIcon = musicBtn.querySelector('.music-icon');
-    const musicText = musicBtn.querySelector('.music-text');
-
-    hoverSound.volume = 0.2; // Hover ses efekti seviyesi
-
-    // Müzik butonuna tıklandığında YouTube videosunu oynat/durdur
-    musicBtn.addEventListener('click', () => {
-      // Eğer YouTube API yüklendiyse ve oynatıcı hazırsa
-      if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
-        const state = ytPlayer.getPlayerState();
-        if (state !== YT.PlayerState.PLAYING) {
-          ytPlayer.playVideo();
-          musicIcon.textContent = '🔊';
-          musicText.textContent = 'Sesi Kapat';
-          musicBtn.classList.add('playing');
-        } else {
-          ytPlayer.pauseVideo();
-          musicIcon.textContent = '🔇';
-          musicText.textContent = 'Sesi Aç';
-          musicBtn.classList.remove('playing');
-        }
-      }
-    });
-
-    // Hover (üzerine gelme) sesini tetikleyen fonksiyon
-    function attachHoverSounds() {
-      const interactiveElements = document.querySelectorAll('.interactive-el, .story-card');
-      
-      interactiveElements.forEach(el => {
-        el.replaceWith(el.cloneNode(true)); 
-      });
-
-      const freshElements = document.querySelectorAll('.interactive-el, .story-card');
-      freshElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          hoverSound.currentTime = 0; 
-          hoverSound.play().catch(() => {}); 
-        });
-      });
-    }
-
-    /* ---------------------------------------------------
-       3. GÖZLEMCİ VE DİNAMİK KART LİSTESİ
-       --------------------------------------------------- */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(el => {
         if (el.isIntersecting) el.target.classList.add('visible');
@@ -498,12 +417,24 @@
       });
       
       document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-      attachHoverSounds(); 
     }
 
     renderChampions();
 
-    /* FİLTRELEME VE SIRALAMA ALGORİTMASI */
+    /* -------------------------------------------------------------------------
+       2. HOVER (ÜSTÜNE GELİNCE ÇIKAN SES) VE FİLTRELEME İŞLEMLERİ (GÜVENLİ BÖLGE) 
+       ------------------------------------------------------------------------- */
+    const hoverSound = document.getElementById('hover-sound');
+    if (hoverSound) {
+      hoverSound.volume = 0.2;
+      document.querySelectorAll('.interactive-el').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          hoverSound.currentTime = 0; 
+          hoverSound.play().catch(() => {}); // Ses engellenirse kodu durdurma
+        });
+      });
+    }
+
     const filterSelect = document.getElementById('filter-region');
     const sortSelect = document.getElementById('sort-order');
 
@@ -541,7 +472,64 @@
 
     filterSelect.addEventListener('change', updateGrid);
     sortSelect.addEventListener('change', updateGrid);
-    attachHoverSounds();
+
+    /* -------------------------------------------------------------------------
+       3. YOUTUBE API (ÖZEL KARANTİNA - ÇÖKSE BİLE SİTEYİ BOZMAZ)
+       ------------------------------------------------------------------------- */
+    try {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(tag); // En güvenli ekleme yöntemi
+
+      const musicBtn = document.getElementById('music-toggle');
+      const musicIcon = musicBtn.querySelector('.music-icon');
+      const musicText = musicBtn.querySelector('.music-text');
+      let isMusicPlaying = false; // Müzik durumunu biz takip ediyoruz
+
+      musicBtn.addEventListener('click', () => {
+        if (!window.ytPlayer || typeof window.ytPlayer.playVideo !== 'function') {
+          alert("Müzik bağlantısı tarayıcınız tarafından engellendi veya henüz yüklenmedi. Lütfen 1-2 saniye bekleyip tekrar deneyin.");
+          return;
+        }
+
+        if (!isMusicPlaying) {
+          window.ytPlayer.playVideo();
+          musicIcon.textContent = '🔊';
+          musicText.textContent = 'Sesi Kapat';
+          musicBtn.classList.add('playing');
+          isMusicPlaying = true;
+        } else {
+          window.ytPlayer.pauseVideo();
+          musicIcon.textContent = '🔇';
+          musicText.textContent = 'Sesi Aç';
+          musicBtn.classList.remove('playing');
+          isMusicPlaying = false;
+        }
+      });
+
+      // YouTube API sistemi hazır olduğunda bu fonksiyonu çağırır
+      window.onYouTubeIframeAPIReady = function() {
+        window.ytPlayer = new YT.Player('youtube-player', {
+          height: '200', 
+          width: '200',
+          videoId: 'aPf9EcHbWHE', 
+          playerVars: {
+            'autoplay': 0,
+            'controls': 0,
+            'disablekb': 1,
+            'fs': 0,
+            'start': 2 // Salvation kısmı
+          },
+          events: {
+            'onReady': function(event) {
+              event.target.setVolume(30); 
+            }
+          }
+        });
+      };
+    } catch (error) {
+      console.error("YouTube müzik oynatıcısı yüklenemedi:", error);
+    }
   </script>
 </body>
 </html>

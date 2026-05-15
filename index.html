@@ -151,28 +151,43 @@
     .card-link { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: gap 0.2s, color 0.3s; margin-top: 15px; }
     .story-card:hover .card-link { gap: 14px; color: var(--rc); }
 
-    /* HAKKINDA BÖLÜMÜ */
-    #hakkinda { padding-bottom: 100px; }
-    .about-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 56px; display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
-    .about-left { text-align: center; }
-    @keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .avatar-ring { position: relative; width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(200,151,42,0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; background: rgba(200,151,42,0.05); box-shadow: 0 0 40px rgba(200,151,42,0.1); }
-    .avatar-ring::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px dashed rgba(200,151,42,0.5); animation: spinRing 15s linear infinite; }
-    .about-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-    .about-title-small { font-size: 14px; color: var(--gold); font-style: italic; }
-    .about-right h3 { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 20px; }
-    .about-right p { font-size: 17px; color: var(--muted); margin-bottom: 16px; line-height: 1.85; }
-    .regions-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-    .region-badge { font-family: 'Cinzel', serif; font-size: 11px; padding: 6px 14px; border-radius: 2px; border: 1px solid var(--rbo, rgba(200,151,42,0.3)); color: var(--rc, var(--gold)); background: var(--rb, rgba(200,151,42,0.06)); letter-spacing: 0.1em; transition: all 0.3s; }
-    .region-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--rb, rgba(200,151,42,0.15)); filter: brightness(1.2); }
-
-    /* SİNEMATİK GEÇİŞ ARAYÜZÜ */
+    /* =========================================
+       SİNEMATİK GEÇİŞ ARAYÜZÜ (AKICI HALE GELDİ)
+       ========================================= */
     #page-transition-overlay { position: fixed; inset: 0; z-index: 9999999; pointer-events: none; visibility: hidden; display: flex; justify-content: center; align-items: center; }
-    .transition-splash { position: absolute; inset: 0; background-position: center top; background-size: cover; background-repeat: no-repeat; opacity: 0; transform: scale(1.1); transition: opacity 0.8s ease-out, transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-    .transition-blackout { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.8s ease-in-out; }
+    
+    .transition-splash {
+      position: absolute; inset: 0;
+      background-position: center top; background-size: cover; background-repeat: no-repeat;
+      
+      /* AKICI BAŞLANGIÇ: Biraz büyük, bulanık, parlak ve hafif aşağıda */
+      opacity: 0;
+      transform: scale(1.15) translateY(20px);
+      filter: blur(5px) brightness(1.2);
+      
+      /* AKICI GEÇİŞ SÜRESİ VE TÜRÜ (Bütün efektler ayrı ayrı anime olur) */
+      transition:
+        opacity 0.7s ease-out,
+        transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 1s ease-out;
+    }
+
+    #page-transition-overlay.active .transition-splash {
+      /* AKICI BİTİŞ: Normal boyut, net, normal parlaklık ve merkezde */
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: blur(0px) brightness(1);
+    }
+    
+    /* Üstüne inen sinematik siyah ekran */
+    .transition-blackout {
+      position: absolute; inset: 0; background: #000;
+      opacity: 0; transition: opacity 1s ease-in-out;
+    }
+    
+    /* Aktif olduğunda animasyonları başlatır */
     #page-transition-overlay.active { visibility: visible; pointer-events: all; }
-    #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1); }
-    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; }
+    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; } /* Siyah ekran iner */
 
     footer { position: relative; z-index: 1; border-top: 1px solid rgba(200,151,42,0.12); padding: 48px 56px; text-align: center; }
     .footer-logo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 12px; }
@@ -268,6 +283,7 @@
       entries.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); });
     }, { threshold: 0.08 });
 
+    // (Şampiyon verileri buraya gelecek - Bir önceki kodla aynı)
     const championsData = [
       { id: "Volibear", name: "Volibear", epic: "Fırtınanın Pençeleri", regionClass: "freljord", regionDisplay: "Freljord", date: "15 Mayıs 2026", excerpt: "Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu; yaklaşan fırtınanın habercisiydi..." },
       { id: "Garen", name: "Garen", epic: "Demacia'nın Kudreti", regionClass: "demacia", regionDisplay: "Demacia", date: "10 Mayıs 2026", excerpt: "Demacia'nın görkemli surları, ancak onları koruyan yürekler kadar güçlüdür." },
@@ -374,7 +390,7 @@
         playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'start': 2 },
         events: {
           'onReady': (event) => {
-             event.target.setVolume(10); // MÜZİK SESİ %10'A DÜŞÜRÜLDÜ
+             event.target.setVolume(10); // MÜZİK SESİ %10
           }
         }
       });
@@ -408,7 +424,7 @@
     });
 
     // Hover Efekt Ses Ayarı
-    hoverSound.volume = 0.15; // EFEKT SESİ %15'E DÜŞÜRÜLDÜ
+    hoverSound.volume = 0.15; // EFEKT SESİ %15
     hoverSound.addEventListener('timeupdate', function() {
       if (this.currentTime >= 9.0) this.pause(); // 9.0 sn'de durdur
     });

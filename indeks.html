@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runeterra Günlükleri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06080f; --bg2: #090d18; --card: #0b1020; --border: #1a2035;
+      --gold: #c8972a; --gold2: #e8c060; --blue: #4a9eff; --text: #d4c9b8; --muted: #6a7080;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Crimson Pro', serif; font-size: 18px; line-height: 1.8; overflow-x: hidden; margin: 0; }
+
+    #scroll-lock { position: fixed; inset: 0; z-index: 999999; animation: removeLock 0s linear 4.5s forwards; }
+    @keyframes removeLock { to { visibility: hidden; pointer-events: none; } }
+
+    @keyframes ambientGlow { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(74,158,255,0.05) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(200,151,42,0.07) 0%, transparent 60%); pointer-events: none; z-index: 0; animation: ambientGlow 10s ease-in-out infinite; }
+
+    /* NAV MENÜSÜ */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.92); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(200,151,42,0.15); opacity: 0; animation: navFadeDown 0.8s ease-out 4.2s forwards; }
+    @keyframes navFadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .logo { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; transition: text-shadow 0.3s; }
+    .logo:hover { text-shadow: 0 0 15px rgba(200,151,42,0.5); }
+    .logo span { color: var(--text); font-weight: 400; }
+    nav ul { display: flex; gap: 36px; list-style: none; }
+    nav a { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; }
+    nav a:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,151,42,0.4); }
+
+    /* YILDIZ GİRİŞİ */
+    #hero { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 40px 80px; }
+    .rune-divider { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; font-size: 18px; }
+    .rune-icon { display: inline-block; color: var(--gold); will-change: transform, opacity, filter, text-shadow; animation: introStar 4s linear forwards, pulseRune 3s infinite ease-in-out 4s; }
+    @keyframes introStar {
+      0%   { transform: translate(0vw, 25vh) scale(12) rotate(0deg); opacity: 0; filter: blur(0px) brightness(1); text-shadow: 0 0 10px var(--gold); }
+      5%   { transform: translate(0vw, 25vh) scale(13) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1.2); text-shadow: 0 0 30px var(--gold2); }
+      15%  { transform: translate(0vw, 25vh) scale(14) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1.5); text-shadow: 0 0 60px var(--gold2); }
+      20%  { transform: translate(8vw, 24vh) scale(12) rotate(45deg); filter: blur(1px) brightness(1.5); }
+      25%  { transform: translate(16vw, 22vh) scale(10) rotate(90deg); filter: blur(2px) brightness(1.5); }
+      30%  { transform: translate(23vw, 19vh) scale(8) rotate(135deg); filter: blur(3px) brightness(1.5); }
+      35%  { transform: translate(29vw, 15vh) scale(6) rotate(180deg); }
+      40%  { transform: translate(33vw, 11vh) scale(4.5) rotate(225deg); }
+      45%  { transform: translate(35vw, 7vh) scale(3.5) rotate(270deg); filter: blur(3px) brightness(1.5); text-shadow: 0 0 20px var(--gold2); }
+      50%  { transform: translate(34vw, 3.5vh) scale(2.5) rotate(315deg); filter: blur(2px); }
+      55%  { transform: translate(31vw, 1vh) scale(2.0) rotate(360deg); filter: blur(1px); }
+      60%  { transform: translate(26vw, -0.5vh) scale(1.6) rotate(405deg); filter: blur(0.5px); }
+      65%  { transform: translate(19vw, -1.5vh) scale(1.3) rotate(450deg); filter: blur(0px); }
+      70%  { transform: translate(10vw, -1.5vh) scale(1.1) rotate(495deg); }
+      75%  { transform: translate(0vw, 0vh) scale(1) rotate(540deg); opacity: 1; color: var(--gold); text-shadow: 0 0 5px var(--gold); filter: brightness(1); }
+      80%  { transform: translate(0vw, 0vh) scale(2.8) rotate(540deg); color: #fff; text-shadow: 0 0 60px #fff, 0 0 120px var(--gold2); filter: brightness(2); }
+      100% { transform: translate(0vw, 0vh) scale(1) rotate(540deg); opacity: 1; color: var(--gold); text-shadow: 0 0 5px var(--gold); filter: brightness(1); }
+    }
+    @keyframes pulseRune { 0%, 100% { text-shadow: 0 0 5px var(--gold); transform: scale(1); } 50% { text-shadow: 0 0 20px var(--gold2); transform: scale(1.2); } }
+    .rune-line { display: block; width: 0px; height: 1px; opacity: 0; animation: expandLine 0.6s cubic-bezier(0.2, 1, 0.2, 1) 3.2s forwards; }
+    .rune-line.left { background: linear-gradient(90deg, transparent, var(--gold)); }
+    .rune-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
+    @keyframes expandLine { from { width: 0px; opacity: 0; } to { width: 80px; opacity: 1; } }
+
+    @keyframes textFadeUp { from { opacity: 0; transform: translateY(30px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0px); } }
+    .hero-sub { font-family: 'Cinzel', serif; font-size: clamp(14px, 2vw, 20px); font-weight: 400; color: var(--gold); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 32px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.3s forwards; }
+    h1 { font-family: 'Cinzel', serif; font-size: clamp(42px, 7vw, 88px); font-weight: 900; line-height: 1.05; letter-spacing: 0.04em; color: #fff; text-shadow: 0 0 60px rgba(200,151,42,0.25); margin-bottom: 8px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.5s forwards; }
+    .hero-desc { font-size: 18px; font-style: italic; color: var(--muted); max-width: 560px; line-height: 1.8; margin-bottom: 52px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.7s forwards; }
+    
+    @keyframes buttonShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
+    .hero-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden; opacity: 0; animation: textFadeUp 0.8s ease-out 3.9s forwards; }
+    .hero-cta::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(200,151,42,0.4), transparent); transform: skewX(-25deg); animation: buttonShine 4s infinite; }
+    .hero-cta:hover { border-color: var(--gold); color: var(--gold2); background: rgba(200,151,42,0.07); box-shadow: 0 0 20px rgba(200,151,42,0.2); }
+
+    @keyframes hintFadeUp { from { opacity: 0; transform: translateX(-50%) translateY(30px); filter: blur(4px); } to { opacity: 1; transform: translateX(-50%) translateY(0); filter: blur(0px); } }
+    .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0; animation: hintFadeUp 0.8s ease-out 4.2s forwards, floatY 2.5s ease-in-out infinite 5.0s; }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--gold), transparent); }
+    @keyframes floatY { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+    /* FİLTRE VE BÖLÜM TASARIMLARI */
+    .controls-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 40px; opacity: 0; animation: textFadeUp 0.8s ease-out 0.5s forwards; }
+    .control-box { display: flex; align-items: center; gap: 12px; background: rgba(11, 16, 32, 0.6); padding: 8px 16px; border: 1px solid rgba(200, 151, 42, 0.2); border-radius: 4px; transition: border-color 0.3s, box-shadow 0.3s; }
+    .control-box:hover { border-color: rgba(200, 151, 42, 0.6); box-shadow: 0 0 15px rgba(200, 151, 42, 0.1); }
+    .control-box label { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; }
+    .control-box select { background: transparent; color: #fff; border: none; font-family: 'Crimson Pro', serif; font-size: 16px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 10px; }
+    .control-box select option { background: var(--bg); color: var(--text); }
+    
+    .section-wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 48px; }
+    .section-title { text-align: center; padding: 80px 0 30px; }
+    .section-eyebrow { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 16px; }
+    .section-title h2 { font-family: 'Cinzel', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; color: #fff; letter-spacing: 0.04em; }
+    .gold-rule { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 20px auto 0; }
+
+    /* TÜM RUNETERRA BÖLGELERİ VE RENK DEĞİŞKENLERİ */
+    .demacia    { --rc:#4a9eff; --rb:rgba(74,158,255,0.12);  --rbo:rgba(74,158,255,0.4); }
+    .noxus      { --rc:#cc3333; --rb:rgba(204,51,51,0.12);   --rbo:rgba(204,51,51,0.4); }
+    .ionia      { --rc:#c87eff; --rb:rgba(200,126,255,0.12); --rbo:rgba(200,126,255,0.4); }
+    .piltover   { --rc:#f0a020; --rb:rgba(240,160,32,0.12);  --rbo:rgba(240,160,32,0.4); }
+    .freljord   { --rc:#7bcfff; --rb:rgba(123,207,255,0.12); --rbo:rgba(123,207,255,0.4); }
+    .shadow     { --rc:#15c9b1; --rb:rgba(21,201,177,0.12);  --rbo:rgba(21,201,177,0.4); }
+    .zaun       { --rc:#2de370; --rb:rgba(45,227,112,0.12);  --rbo:rgba(45,227,112,0.4); }
+    .bilgewater { --rc:#c84b31; --rb:rgba(200,75,49,0.12);   --rbo:rgba(200,75,49,0.4); }
+    .shurima    { --rc:#e6c229; --rb:rgba(230,194,41,0.12);  --rbo:rgba(230,194,41,0.4); }
+    .targon     { --rc:#7b68ee; --rb:rgba(123,104,238,0.12); --rbo:rgba(123,104,238,0.4); }
+    .void       { --rc:#b959ff; --rb:rgba(185,89,255,0.12);  --rbo:rgba(185,89,255,0.4); }
+    .bandle     { --rc:#4caf50; --rb:rgba(76,175,80,0.12);   --rbo:rgba(76,175,80,0.4); }
+    .ixtal      { --rc:#00c853; --rb:rgba(0,200,83,0.12);    --rbo:rgba(0,200,83,0.4); }
+
+    /* HİKAYE KARTLARI CSS */
+    #hikayeler { padding-bottom: 100px; }
+    .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    
+    .story-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s, box-shadow 0.4s; }
+    
+    /* Hover durumunda çerçevenin ve gölgenin bölge rengine dönmesi */
+    .story-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--rbo); box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px var(--rb); }
+    
+    .card-region-bar { height: 3px; width: 100%; transition: height 0.3s; background: var(--rc); }
+    .story-card:hover .card-region-bar { height: 5px; }
+    
+    .card-body { padding: 28px; }
+    .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    
+    .card-content-flex { display: flex; align-items: flex-start; margin-bottom: 20px; position: relative; }
+    .img-container { width: 0px; opacity: 0; overflow: hidden; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; flex-shrink: 0; }
+    .story-card:hover .img-container { width: 86px; opacity: 1; }
+    .card-hover-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; margin-right: 14px; transform: scale(0.8) translateX(-20px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--rc); box-shadow: 0 0 15px var(--rb); }
+    .story-card:hover .card-hover-img { transform: scale(1) translateX(0); }
+    
+    .card-text-wrapper { flex-grow: 1; width: 100%; }
+    
+    .card-title-container { display: grid; margin-bottom: 8px; }
+    .card-title-container > div { grid-area: 1 / 1; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; line-height: 1.3; letter-spacing: 0.05em; transition: opacity 0.4s ease, transform 0.4s ease; }
+    
+    .title-name { color: #fff; opacity: 1; transform: translateY(0); }
+    /* Unvan artık bölgenin özel rengiyle (var(--rc)) parlıyor */
+    .title-epic { color: var(--rc); opacity: 0; transform: translateY(10px); pointer-events: none; text-shadow: 0 0 12px var(--rb); }
+    
+    .story-card:hover .title-name { opacity: 0; transform: translateY(-10px); }
+    .story-card:hover .title-epic { opacity: 1; transform: translateY(0); }
+    
+    .card-region { color: var(--rc); background: var(--rb); border-color: var(--rbo); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; border: 1px solid; }
+    .card-date { font-size: 13px; color: var(--muted); font-style: italic; }
+    .card-excerpt { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 0; font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 72px; }
+    
+    /* "Okumaya Devam Et" yazısı normalde altın, hover olunca bölge rengine dönüyor */
+    .card-link { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: gap 0.2s, color 0.3s; margin-top: 15px; }
+    .story-card:hover .card-link { gap: 14px; color: var(--rc); }
+
+    /* HAKKINDA BÖLÜMÜ VE ROZETLER */
+    #hakkinda { padding-bottom: 100px; }
+    .about-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 56px; display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
+    .about-left { text-align: center; }
+    @keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .avatar-ring { position: relative; width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(200,151,42,0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; background: rgba(200,151,42,0.05); box-shadow: 0 0 40px rgba(200,151,42,0.1); }
+    .avatar-ring::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px dashed rgba(200,151,42,0.5); animation: spinRing 15s linear infinite; }
+    .about-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+    .about-title-small { font-size: 14px; color: var(--gold); font-style: italic; }
+    .about-right h3 { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 20px; }
+    .about-right p { font-size: 17px; color: var(--muted); margin-bottom: 16px; line-height: 1.85; }
+    
+    .regions-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    
+    /* Hakkında kısmındaki rozetler de artık kendi bölgelerinin renklerini alıyor! */
+    .region-badge { font-family: 'Cinzel', serif; font-size: 11px; padding: 6px 14px; border-radius: 2px; border: 1px solid var(--rbo, rgba(200,151,42,0.3)); color: var(--rc, var(--gold)); background: var(--rb, rgba(200,151,42,0.06)); letter-spacing: 0.1em; transition: all 0.3s; }
+    .region-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--rb, rgba(200,151,42,0.15)); filter: brightness(1.2); }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; border-top: 1px solid rgba(200,151,42,0.12); padding: 48px 56px; text-align: center; }
+    .footer-logo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 12px; }
+    .footer-quote { font-style: italic; color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+    .footer-copy { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+
+    .fade-in { opacity: 0; transform: translateY(35px); transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; } nav ul { gap: 20px; } .section-wrap { padding: 0 20px; } .about-box { grid-template-columns: 1fr; gap: 32px; padding: 32px 24px; } footer { padding: 40px 20px; }
+      .controls-container { flex-direction: column; align-items: stretch; }
+      .control-box { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="scroll-lock"></div>
+
+  <nav>
+    <div class="logo">Runeterra <span>Günlükleri</span></div>
+    <ul>
+      <li><a href="#hikayeler">Efsaneler</a></li>
+      <li><a href="#hakkinda">Hakkında</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="rune-divider">
+      <span class="rune-line left"></span>
+      <span class="rune-icon">✦</span>
+      <span class="rune-line right"></span>
+    </div>
+    <p class="hero-sub">Runeterra Günlükleri</p>
+    <h1>Efsaneler<br>Yaşıyor</h1>
+    <p class="hero-desc">Demacia'nın surlarından Noxus'un kan kırmızısı topraklarına, Ionia'nın sisli ormanlarından Freljord'un dondurucu tundrasına — hikayeler burada yaşıyor.</p>
+    <a href="#hikayeler" class="hero-cta">Keşfet ✦</a>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      Aşağı Kaydır
+    </div>
+  </section>
+
+  <!-- HİKAYELER / EFSANELER -->
+  <section id="hikayeler">
+    <div class="section-wrap">
+      <div class="section-title fade-in">
+        <div class="section-eyebrow">✦ Arşiv ✦</div>
+        <h2>Efsaneler</h2>
+        <div class="gold-rule"></div>
+      </div>
+
+      <div class="controls-container fade-in">
+        <div class="control-box">
+          <label for="filter-region">Bölge Seç:</label>
+          <select id="filter-region">
+            <option value="all">Tüm Bölgeler</option>
+            <option value="freljord">Freljord</option>
+            <option value="demacia">Demacia</option>
+            <option value="noxus">Noxus</option>
+            <option value="ionia">Ionia</option>
+            <option value="zaun">Zaun</option>
+            <option value="piltover">Piltover</option>
+            <option value="bilgewater">Bilgewater</option>
+            <option value="shurima">Shurima</option>
+            <option value="targon">Targon</option>
+            <option value="shadow">Shadow Isles</option>
+            <option value="void">Hiçlik</option>
+            <option value="bandle">Bandle City</option>
+            <option value="ixtal">Ixtal</option>
+          </select>
+        </div>
+        <div class="control-box">
+          <label for="sort-order">Sırala:</label>
+          <select id="sort-order">
+            <option value="default">En Yeni Eklenenler</option>
+            <option value="name-asc">İsme Göre (A-Z)</option>
+            <option value="name-desc">İsme Göre (Z-A)</option>
+            <option value="region">Bölgeye Göre</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- KARTLARIN OTOMATİK OLUŞTURULACAĞI DİNAMİK ALAN -->
+      <div class="stories-grid" id="main-grid">
+        <!-- JS burayı dolduracak -->
+      </div>
+    </div>
+  </section>
+
+  <!-- HAKKINDA -->
+  <section id="hakkinda">
+    <div class="section-wrap">
+      <div class="section-title fade-in">
+        <div class="section-eyebrow">✦ Yazar ✦</div>
+        <h2>Hakkında</h2>
+        <div class="gold-rule"></div>
+      </div>
+
+      <div class="about-box fade-in">
+        <div class="about-left">
+          <div class="avatar-ring">⚔️</div>
+          <div class="about-name">Mehmet Kadir Erten</div>
+          <div class="about-title-small">Runeterra Hikayecisi</div>
+        </div>
+        <div class="about-right">
+          <h3>Merhaba, ben Kadir.</h3>
+          <p>League of Legends evrenine olan tutkumu hikayeler yazarak dışa vuruyorum. Runeterra'nın derinliklerine daldığımda kendimi o dünyanın bir parçası gibi hissediyorum.</p>
+          <p>Bu blogda Runeterra'nın farklı bölgelerinden ilham alan özgün hikayeler, şampiyonların gözünden olaylar ve bu efsanevi dünyanın keşfedilmemiş köşelerini paylaşıyorum.</p>
+          <div class="regions-list">
+            <!-- Rozetlere CSS'in bölge renklerini alması için kendi sınıfları atandı -->
+            <span class="region-badge freljord">Freljord</span>
+            <span class="region-badge demacia">Demacia</span>
+            <span class="region-badge noxus">Noxus</span>
+            <span class="region-badge ionia">Ionia</span>
+            <span class="region-badge piltover">Piltover</span>
+            <span class="region-badge zaun">Zaun</span>
+            <span class="region-badge bilgewater">Bilgewater</span>
+            <span class="region-badge shurima">Shurima</span>
+            <span class="region-badge targon">Targon</span>
+            <span class="region-badge shadow">Shadow Isles</span>
+            <span class="region-badge void">Hiçlik</span>
+            <span class="region-badge bandle">Bandle City</span>
+            <span class="region-badge ixtal">Ixtal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Runeterra Günlükleri</div>
+    <p class="footer-quote">"Her efsanenin bir başlangıcı vardır."</p>
+    <div class="footer-copy">© 2026 Mehmet Kadir Erten · Tüm hakları saklıdır</div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) el.target.classList.add('visible');
+      });
+    }, { threshold: 0.08 });
+
+    const championsData = [
+      { id: "Volibear", name: "Volibear", epic: "Fırtınanın Pençeleri", regionClass: "freljord", regionDisplay: "Freljord", date: "15 Mayıs 2026", excerpt: "Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu; yaklaşan fırtınanın, vahşi doğanın ta kendisinin habercisiydi. Gökyüzü kara bulutlarla kaplandığında..." },
+      { id: "Garen", name: "Garen", epic: "Demacia'nın Kudreti", regionClass: "demacia", regionDisplay: "Demacia", date: "10 Mayıs 2026", excerpt: "Demacia'nın görkemli surları, ancak onları koruyan yürekler kadar güçlüdür. Garen, kılıcını her savurduğunda krallığının sarsılmaz inancını da ileriye taşıyordu." },
+      { id: "Darius", name: "Darius", epic: "Noxus'un Eli", regionClass: "noxus", regionDisplay: "Noxus", date: "02 Mayıs 2026", excerpt: "Güç, kimin haklı kimin haksız olduğunu belirleyen tek gerçekti. Darius baltasını havaya kaldırdığında, askerleri bunun sadece bir savaş değil, bir infaz olduğunu biliyordu." },
+      { id: "Yasuo", name: "Yasuo", epic: "Günahkâr Kılıç", regionClass: "ionia", regionDisplay: "Ionia", date: "28 Nisan 2026", excerpt: "Affedilmek, sadece suçunu kabul edenler içindir. Yasuo kılıcından süzülen kanı temizlerken, rüzgarın ona hala fısıldadığını duyabiliyordu." },
+      { id: "Jinx", name: "Jinx", epic: "Deliliğin Silahşoru", regionClass: "zaun", regionDisplay: "Zaun", date: "25 Nisan 2026", excerpt: "Kurallar yıkılmak, binalar ise patlatılmak içindir! Jinx için Piltover'ın sıkıcı ve düzenli sokakları, neon yeşili kimyasallarla boyanacak devasa bir oyun alanıydı." },
+      { id: "Thresh", name: "Thresh", epic: "Zincirli Gardiyan", regionClass: "shadow", regionDisplay: "Shadow Isles", date: "20 Nisan 2026", excerpt: "\"Huzur mu? Ne sıkıcı.\" Thresh'in fenerinden yükselen o soğuk camgöbeği ışıltı, karanlığın içindeki çığlıkları daha da belirginleştiriyordu." },
+      { id: "MissFortune", name: "Miss Fortune", epic: "Ödül Avcısı", regionClass: "bilgewater", regionDisplay: "Bilgewater", date: "16 Nisan 2026", excerpt: "Bilgewater'ın tehlikeli ve kan kokan sularında güvenebileceğin tek şey çifte tabancalarındır. Sarah, annesinin intikamını alırken kendi efsanesini yazıyordu." },
+      { id: "Azir", name: "Azir", epic: "Kumların İmparatoru", regionClass: "shurima", regionDisplay: "Shurima", date: "11 Nisan 2026", excerpt: "Binlerce yıllık uykusundan uyanan Shurima, güneşin altında bir kez daha yükselecek. Azir altın asasını yere vurduğunda kumdan askerler emrini bekliyordu." },
+      { id: "Pantheon", name: "Pantheon", epic: "Eğilmez Mızrak", regionClass: "targon", regionDisplay: "Targon", date: "07 Nisan 2026", excerpt: "İlahların gücü bile bir ölümlünün iradesi karşısında boyun eğebilir. Atreus, göklerden düşen yıldızları değil, düştükten sonra ayağa kalkanları yüceltir." },
+      { id: "Kaisa", name: "Kai'Sa", epic: "Hiçliğin Kızı", regionClass: "void", regionDisplay: "Hiçlik", date: "01 Nisan 2026", excerpt: "Canavarların arasında hayatta kalmak için onlardan biri olmak zorundasın. Kai'Sa, karanlığın kalbinde ikinci bir deriyle yaşarken insanlığını kaybetmemek için savaşıyor." },
+      { id: "Vi", name: "Vi", epic: "Piltover Fedaisi", regionClass: "piltover", regionDisplay: "Piltover", date: "28 Mart 2026", excerpt: "Sorunları çözmenin pek çok yolu vardır ama Vi için en etkilisi her zaman yumrukları olmuştur. Hextech eldivenlerinin motorları homurdandığında kapıların şansı kalmazdı." },
+      { id: "Ashe", name: "Ashe", epic: "Ayaz Okçusu", regionClass: "freljord", regionDisplay: "Freljord", date: "23 Mart 2026", excerpt: "Gerçek bir kabile annesi savaşmak için değil, barışı korumak için yayını gerer. Gerçek Buz'dan yapılmış oku hedefini bulduğunda, Avarosa'nın iradesi yankılanıyordu." },
+      { id: "Lux", name: "Lux", epic: "Işığın Leydisi", regionClass: "demacia", regionDisplay: "Demacia", date: "17 Mart 2026", excerpt: "Büyünün nefretle karşılandığı bir şehirde, içindeki gücü saklamak en büyük savaştır. Lux, kalbindeki aydınlığı asla karartmayacaktı." },
+      { id: "Warwick", name: "Warwick", epic: "Zaun'un Öfkesi", regionClass: "zaun", regionDisplay: "Zaun", date: "12 Mart 2026", excerpt: "Kimyasal sızıntıların ortasında, kanın kokusu her şeyden keskindir. Warwick, sırtındaki tüplerden akan zehirle avının korkusunu hissettiğinde, zincirler bile onu durduramazdı." },
+      { id: "Swain", name: "Swain", epic: "Büyük General", regionClass: "noxus", regionDisplay: "Noxus", date: "08 Mart 2026", excerpt: "Savaş meydanında kan dökülmeden çok önce, zafer satranç masasında kazanılır. Swain'in şeytani gözü her zayıflığı görebiliyor, kargaları fısıltıları getiriyordu." },
+      { id: "Pyke", name: "Pyke", epic: "Kanlı Liman'ın Öcü", regionClass: "bilgewater", regionDisplay: "Bilgewater", date: "03 Mart 2026", excerpt: "Derinlerin karanlığından gelen bir fısıltı... Pyke'ın zihnindeki listeye adın bir kez yazıldıysa, Bilgewater'ın en yüksek kalesinde bile olsan kurtulamazsın." },
+      { id: "Ahri", name: "Ahri", epic: "Dokuz Kuyruklu Tilki", regionClass: "ionia", regionDisplay: "Ionia", date: "26 Şubat 2026", excerpt: "Güzellik, ardında saklanan tehlikeyi maskelemek için kusursuz bir silahtır. Ahri, kurbanlarının son anlarında hissettikleri tutkuyu ruhlarına işliyordu." },
+      { id: "Nasus", name: "Nasus", epic: "Kumların Muhafızı", regionClass: "shurima", regionDisplay: "Shurima", date: "19 Şubat 2026", excerpt: "Zaman, ölümlüler için bir düşman olabilir ama Yükseliş'e ermiş biri için sadece bir araçtır. Nasus, kadim imparatorluğunun mirasını koruyor." },
+      { id: "Jayce", name: "Jayce", epic: "Yarınların Koruyucusu", regionClass: "piltover", regionDisplay: "Piltover", date: "14 Şubat 2026", excerpt: "Zeka ve gücün mükemmel birleşimi. Jayce, cıvası parlayan Hextech çekicini eline aldığında, Piltover'ın parlak geleceğini savunuyordu." },
+      { id: "Diana", name: "Diana", epic: "Ayın Hiddeti", regionClass: "targon", regionDisplay: "Targon", date: "09 Şubat 2026", excerpt: "Güneşin kavurucu ışığına tapanlar, gecenin soğuk ve affetmez güzelliğini unutmuştu. Diana, gümüş hilal kılıcıyla gerçeği aydınlatmaya yeminliydi." },
+      { id: "Hecarim", name: "Hecarim", epic: "Savaşın Gölgesi", regionClass: "shadow", regionDisplay: "Shadow Isles", date: "05 Şubat 2026", excerpt: "\"Ölümün toynak seslerini duyuyor musunuz?\" Hecarim'in lanetli atlıları ufukta göründüğünde, durdurulamaz bir katliamın sembolü olarak ezip geçerler." },
+      { id: "Khazix", name: "Kha'Zix", epic: "Hiçlik Yağmacısı", regionClass: "void", regionDisplay: "Hiçlik", date: "30 Ocak 2026", excerpt: "Avlan, tüket ve evrim geçir. Kha'Zix için her av, mükemmelliğe giden yolda atılmış bir adımdır. Karşısındaki av ne kadar güçlüyse, o da kanatlarını o kadar hızlı adapte eder." },
+      { id: "Sejuani", name: "Sejuani", epic: "Kışın Gazabı", regionClass: "freljord", regionDisplay: "Freljord", date: "24 Ocak 2026", excerpt: "Kış Pençesi için hayatta kalmak yeterli değildi, zayıfların elenmesi gerekiyordu. Sejuani dev domuzu Bristle'ın üzerinde hücuma kalktığında, fırtına iliklerine kadar işliyordu." },
+      { id: "Sylas", name: "Sylas", epic: "İsyanın Zincirleri", regionClass: "demacia", regionDisplay: "Demacia", date: "18 Ocak 2026", excerpt: "Onu zincirlediklerini sandılar, oysa sadece silahını vermişlerdi. Sylas, Demacia zindanlarından çaldığı büyüyü yine onlara karşı kullanıyordu." },
+      { id: "Karma", name: "Karma", epic: "Aydınlanmış Olan", regionClass: "ionia", regionDisplay: "Ionia", date: "12 Ocak 2026", excerpt: "Barış bir hediye değil, her gün kazanılması gereken bir irade savaşıdır. Karma hem koruyucu bir kalkan hem de yok edici bir lütuf olarak Ionia'nın dengesiydi." },
+      { id: "Caitlyn", name: "Caitlyn", epic: "Piltover Şerifi", regionClass: "piltover", regionDisplay: "Piltover", date: "07 Ocak 2026", excerpt: "Kaçmak sadece yakalanmayı geciktirirdi. Caitlyn keskin nişancı tüfeğinin dürbününden baktığında, suçluların en zeki planları bile suya düşmeye mahkumdu." },
+      { id: "Viego", name: "Viego", epic: "Mahvolmuş Kral", regionClass: "shadow", regionDisplay: "Shadow Isles", date: "02 Ocak 2026", excerpt: "Aşk bazen zehirli bir kılıçtır. Viego, kaybettiği eşini geri getirmek için tüm dünyayı Kara Sis'in içine gömmeye hazırdı; kraliçesiz bir krallığın anlamı yoktu." },
+      { id: "JarvanIV", name: "Jarvan IV", epic: "Demacia'nın Örneği", regionClass: "demacia", regionDisplay: "Demacia", date: "26 Aralık 2025", excerpt: "Bir kral tahtta değil, ön saflarda belli olur. Jarvan IV, ejderha kemiğinden yapılma mızrağını yere sapladığında etrafındaki askerler ölüme bile gülümserdi." },
+      { id: "Zed", name: "Zed", epic: "Gölgelerin Efendisi", regionClass: "ionia", regionDisplay: "Ionia", date: "19 Aralık 2025", excerpt: "Zayıflık, geleneğe körü körüne bağlılıktan doğar. Zed, gölgelerin karanlık gücünü kucakladığında, Ionia'nın gerçek koruyucusunun merhametsiz olması gerektiğine inandı." },
+      { id: "Katarina", name: "Katarina", epic: "Uğursuz Bıçak", regionClass: "noxus", regionDisplay: "Noxus", date: "10 Aralık 2025", excerpt: "Kararlarında tereddüt edenler savaş alanında kanamaya mahkumdur. Katarina'nın dansı, havada uçuşan hançerlerinin ve ölümcül reflekslerinin kusursuz bir senfonisiydi." },
+      { id: "Teemo", name: "Teemo", epic: "Çevik İzci", regionClass: "bandle", regionDisplay: "Bandle City", date: "05 Aralık 2025", excerpt: "Sevimli görünüşüne aldanmamak gerekir. Teemo'nun yerleştirdiği zehirli mantarlar ve görünmezlik yeteneği, en güçlü savaşçıları bile çaresiz bırakabilir." },
+      { id: "Qiyana", name: "Qiyana", epic: "Elementlerin Hakimi", regionClass: "ixtal", regionDisplay: "Ixtal", date: "01 Aralık 2025", excerpt: "Ormanın, toprağın ve suyun gücü onun parmaklarının ucundadır. Qiyana, Ixtal'ın tahtına giden yolda önüne çıkan her şeyi kendi kibri ve yeteneğiyle ezip geçecektir." },
+      { id: "Rengar", name: "Rengar", epic: "Gölge Avcı", regionClass: "ixtal", regionDisplay: "Ixtal", date: "25 Kasım 2025", excerpt: "Ormanın derinliklerinde av olanlar, genellikle Rengar'ın varlığını sadece o son, ölümcül sıçrayış anında fark ederler. Onun için avlanmak bir görev değil, yaşama biçimidir." },
+      { id: "Veigar", name: "Veigar", epic: "Kötülüğün Minik Efendisi", regionClass: "bandle", regionDisplay: "Bandle City", date: "20 Kasım 2025", excerpt: "Karanlık sihir ve kozmik enerjiler onun elinde oyuncak gibidir. Veigar, boyuna gülüp geçenlere evrenin en yıkıcı büyüsünün tadını tattırmaktan zevk alır." },
+      { id: "Braum", name: "Braum", epic: "Freljord'un Yüreği", regionClass: "freljord", regionDisplay: "Freljord", date: "15 Kasım 2025", excerpt: "Buzlu diyarların sıcak gülümsemeli kahramanı. Braum, devasa kalkanıyla sadece dostlarını değil, tüm Freljord'un umudunu arkasında taşır." },
+      { id: "Leona", name: "Leona", epic: "Şafağın Işığı", regionClass: "targon", regionDisplay: "Targon", date: "10 Kasım 2025", excerpt: "Güneşin kavurucu kudreti onun kalkanında toplanır. Leona, Targon Dağı'nın tepesinden inen altın ışıkla karanlığın her türlü formunu yakıp kül etmeye yeminlidir." },
+      { id: "Ekko", name: "Ekko", epic: "Zaman Kırıcı", regionClass: "zaun", regionDisplay: "Zaun", date: "05 Kasım 2025", excerpt: "Zaun'un zehirli sokaklarında saniyeler önemlidir. Ekko, kendi icadı olan Z-Kapsülü sayesinde hataları geri alabilir; çünkü mükemmellik bazen ikinci bir şans gerektirir." },
+      { id: "Sivir", name: "Sivir", epic: "Savaş Hanımı", regionClass: "shurima", regionDisplay: "Shurima", date: "01 Kasım 2025", excerpt: "Çölde hayatta kalmanın bedeli altındır. Sivir, efsanevi çapraz bıçağını savururken Shurima'nın yıkıntıları arasında hem ganimet hem de kadim bir miras arıyor." },
+      { id: "Graves", name: "Graves", epic: "Kanunsuz", regionClass: "bilgewater", regionDisplay: "Bilgewater", date: "25 Ekim 2025", excerpt: "Barut kokusu ve bozuk paralar... Graves'in o meşhur çifte namlulsu patladığında, Bilgewater rıhtımlarında birilerinin yine çok kötü bir gün geçirdiği anlaşılır." },
+      { id: "Malzahar", name: "Malzahar", epic: "Hiçlik'in Peygamberi", regionClass: "void", regionDisplay: "Hiçlik", date: "20 Ekim 2025", excerpt: "Karanlığın fısıltılarını duyan Malzahar, zihnini Hiçlik'in uçsuz bucaksız dehşetine açtı. Artık o, dünyanın sonunu getirecek olan sürünün ulağıdır." },
+      { id: "AurelionSol", name: "Aurelion Sol", epic: "Yıldızların Hakimi", regionClass: "targon", regionDisplay: "Targon", date: "15 Ekim 2025", excerpt: "Gökadaları kendi elleriyle şekillendiren kozmik bir ejderha. Targon'un kibri tarafından zincirlense de, gökyüzündeki her bir yıldız hala onun adını fısıldar." },
+      { id: "Lucian", name: "Lucian", epic: "İnfazcı", regionClass: "demacia", regionDisplay: "Demacia", date: "10 Ekim 2025", excerpt: "Karanlığa karşı verilen savaşta merhamete yer yoktur. Lucian, elindeki çifte ışık silahlarıyla Gölge Adalar'ın dehşetini temizlerken, kaybettiği aşkının yasını tutar." },
+      { id: "Fiora", name: "Fiora", epic: "Büyük Düellocu", regionClass: "demacia", regionDisplay: "Demacia", date: "05 Ekim 2025", excerpt: "Zarafet ve ölümcül isabet... Fiora kılıcını çektiğinde her darbesi hesaplanmış bir şaheser, her hamlesi Laurent hanesinin şerefini koruyan bir yemin gibidir." },
+      { id: "Talon", name: "Talon", epic: "Bıçağın Gölgesi", regionClass: "noxus", regionDisplay: "Noxus", date: "01 Ekim 2025", excerpt: "Noxus sokaklarında iz bırakmadan avlanmak bir sanattır. Talon, hedefini gözüne kestirdiğinde, kan dökülmesi sadece an meselesidir ve asla merhamet etmez." },
+      { id: "Irelia", name: "Irelia", epic: "Bıçakların Dansçısı", regionClass: "ionia", regionDisplay: "Ionia", date: "25 Eylül 2025", excerpt: "Vatanını korumak için dansını bir silaha dönüştürdü. Irelia'nın havada süzülen bıçakları, Ionia'ya boyun eğdirmeye çalışan Noxus askerlerinin son gördüğü şey oldu." },
+      { id: "Urgot", name: "Urgot", epic: "Zaun'un Dehşeti", regionClass: "zaun", regionDisplay: "Zaun", date: "20 Eylül 2025", excerpt: "Güçlüler hayatta kalır, zayıflar yok olur. Urgot'un metal ve etten oluşan bedeni, Zaun'un en derin çukurlarından yükselen mekanik bir ölüm makinesidir." },
+      { id: "Renekton", name: "Renekton", epic: "Kumların Kasabı", regionClass: "shurima", regionDisplay: "Shurima", date: "15 Eylül 2025", excerpt: "Bir zamanlar Shurima'nın gururu olan Renekton, yüzyıllar süren karanlıkta aklını yitirdi. Artık sadece öfkesiyle beslenen ve ağabeyinin kanını arayan bir canavardır." },
+      { id: "Gangplank", name: "Gangplank", epic: "Okyanus Şeytanı", regionClass: "bilgewater", regionDisplay: "Bilgewater", date: "10 Eylül 2025", excerpt: "Bilgewater'ın taçsız kralı. Gangplank her şeyini kaybetmiş olabilir ama yanan kılıcı ve patlamaya hazır fıçılarıyla şehrini geri almaya eskisinden çok daha acımasız geliyor." },
+      { id: "Velkoz", name: "Vel'Koz", epic: "Hiçlik'in Gözü", regionClass: "void", regionDisplay: "Hiçlik", date: "05 Eylül 2025", excerpt: "Onun için varoluş sadece analiz edilmesi gereken bir denklemdir. Vel'Koz, gözünden saçtığı yıkıcı enerjiyle kurbanlarını parçalarken sadece bilgi edinmeyi amaçlar." },
+      { id: "Lissandra", name: "Lissandra", epic: "Buz Cadısı", regionClass: "freljord", regionDisplay: "Freljord", date: "01 Eylül 2025", excerpt: "Kara Buz'un dondurucu kalbi onun göğsünde atıyor. Lissandra, dünyanın sırlarını kadim buzların ardına gömerken, uyuyan dehşetleri kendi iradesiyle kontrol altında tutuyor." }
+    ];
+
+    const grid = document.getElementById('main-grid');
+
+    function renderChampions() {
+      grid.innerHTML = '';
+      
+      championsData.forEach((champ, index) => {
+        const card = document.createElement('div');
+        card.className = `story-card ${champ.regionClass} fade-in`;
+        card.dataset.index = index; 
+        
+        card.innerHTML = `
+          <div class="card-region-bar"></div>
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="card-region">${champ.regionDisplay}</span>
+              <span class="card-date">${champ.date}</span>
+            </div>
+            
+            <div class="card-content-flex">
+              <div class="img-container">
+                <img class="card-hover-img" src="https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/${champ.id}.png" alt="${champ.name}" loading="lazy">
+              </div>
+              <div class="card-text-wrapper">
+                <div class="card-title-container">
+                  <div class="title-name">${champ.name}</div>
+                  <div class="title-epic">${champ.epic}</div>
+                </div>
+                <p class="card-excerpt">${champ.excerpt}</p>
+              </div>
+            </div>
+
+            <a href="#" class="card-link">Okumaya Devam Et →</a>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+      
+      document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }
+
+    renderChampions();
+
+    const filterSelect = document.getElementById('filter-region');
+    const sortSelect = document.getElementById('sort-order');
+
+    function updateGrid() {
+      const cards = Array.from(grid.querySelectorAll('.story-card'));
+      const filterValue = filterSelect.value;
+      const sortValue = sortSelect.value;
+
+      cards.forEach(card => {
+        if (filterValue === 'all' || card.classList.contains(filterValue)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      let visibleCards = cards.filter(card => card.style.display === 'block');
+      
+      visibleCards.sort((a, b) => {
+        if (sortValue === 'name-asc') {
+          return a.querySelector('.title-name').textContent.localeCompare(b.querySelector('.title-name').textContent, 'tr');
+        } else if (sortValue === 'name-desc') {
+          return b.querySelector('.title-name').textContent.localeCompare(a.querySelector('.title-name').textContent, 'tr');
+        } else if (sortValue === 'region') {
+          return a.querySelector('.card-region').textContent.localeCompare(b.querySelector('.card-region').textContent, 'tr');
+        } else {
+          return a.dataset.index - b.dataset.index;
+        }
+      });
+
+      visibleCards.forEach((card, index) => {
+        card.style.order = index;
+      });
+    }
+
+    filterSelect.addEventListener('change', updateGrid);
+    sortSelect.addEventListener('change', updateGrid);
+  </script>
+</body>
+</html>

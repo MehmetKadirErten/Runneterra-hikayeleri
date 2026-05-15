@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fırtınanın Pençeleri - Runeterra Günlükleri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06080f; --bg2: #090d18; --border: #1a2035;
+      --gold: #c8972a; --gold2: #e8c060; --text: #d4c9b8; --muted: #6a7080;
+      --freljord: #7bcfff; --freljord-bg: rgba(123, 207, 255, 0.1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Crimson Pro', serif; font-size: 19px; line-height: 1.8; overflow-x: hidden; margin: 0; }
+
+    /* NAV MENÜSÜ */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(123, 207, 255, 0.15); }
+    .logo { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+    .logo span { color: var(--text); font-weight: 400; }
+    nav ul { display: flex; gap: 36px; list-style: none; }
+    nav a { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; }
+    nav a:hover { color: var(--freljord); text-shadow: 0 0 10px var(--freljord-bg); }
+
+    /* SİNEMATİK BAŞLIK BÖLÜMÜ */
+    .story-hero {
+      position: relative;
+      height: 70vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 80px;
+      /* Volibear'in orijinal Riot Splash Art'ı arka plan olarak çekiliyor */
+      background: url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Volibear_0.jpg') center top / cover no-radius;
+    }
+    
+    /* Resmin altına doğru koyulaşan degrade efekti */
+    .story-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(6,8,15,0.2) 0%, rgba(6,8,15,0.8) 60%, var(--bg) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      padding: 0 20px;
+      animation: fadeUp 1s ease-out forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .region-tag {
+      font-family: 'Cinzel', serif; font-size: 12px; color: var(--freljord); letter-spacing: 0.3em; text-transform: uppercase;
+      display: inline-block; padding: 6px 16px; border: 1px solid rgba(123, 207, 255, 0.3); border-radius: 2px; margin-bottom: 20px;
+      background: var(--freljord-bg);
+    }
+
+    .story-title { font-family: 'Cinzel', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 900; line-height: 1.1; color: #fff; text-shadow: 0 0 40px rgba(123,207,255,0.4); margin-bottom: 12px; }
+    .story-subtitle { font-size: 20px; color: var(--freljord); font-style: italic; font-family: 'Cinzel', serif; letter-spacing: 0.1em; }
+
+    /* HİKAYE METNİ (OKUMA ALANI) */
+    .story-article {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+
+    /* Dergi tarzı büyük ilk harf (Drop Cap) efekti */
+    .story-article p:first-of-type::first-letter {
+      float: left;
+      font-family: 'Cinzel', serif;
+      font-size: 84px;
+      line-height: 60px;
+      padding-top: 4px;
+      padding-right: 12px;
+      padding-left: 3px;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(200,151,42,0.3);
+    }
+
+    .story-article p { margin-bottom: 28px; font-size: 20px; line-height: 1.85; color: #e0d7c8; text-align: justify; }
+
+    /* Vurgulu alıntılar için tasarım */
+    blockquote {
+      margin: 48px 0;
+      padding: 32px 40px;
+      border-left: 2px solid var(--freljord);
+      background: linear-gradient(90deg, rgba(123, 207, 255, 0.05), transparent);
+      font-size: 24px;
+      font-style: italic;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* GERİ DÖN BUTONU */
+    .back-nav { text-align: center; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 40px; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); 
+      color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; 
+      text-decoration: none; transition: all 0.3s;
+    }
+    .back-btn:hover { border-color: var(--gold); color: var(--gold2); background: rgba(200,151,42,0.07); box-shadow: 0 0 20px rgba(200,151,42,0.2); gap: 16px; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid rgba(200,151,42,0.12); padding: 48px 20px; text-align: center; }
+    .footer-logo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 12px; }
+    .footer-copy { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">Runeterra <span>Günlükleri</span></a>
+    <ul>
+      <li><a href="index.html">Tüm Efsaneler</a></li>
+    </ul>
+  </nav>
+
+  <header class="story-hero">
+    <div class="hero-content">
+      <div class="region-tag">Freljord</div>
+      <h1 class="story-title">Fırtınanın Pençeleri</h1>
+      <div class="story-subtitle">Bin Yaralı Ayı • Volibear</div>
+    </div>
+  </header>
+
+  <main class="story-article">
+    <p>Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu; yaklaşan fırtınanın, vahşi doğanın ta kendisinin habercisiydi. Gökyüzü kara bulutlarla kaplanıp şimşekler buzlu dağları aydınlattığında, Ursine kabilesi neyin uyandığını biliyordu. Kardeşi Ornn'un merhametini reddeden, Freljord'un kan ve vahşetle beslenen o kadim ruhu yeniden ayağa kalkıyordu.</p>
+    
+    <p>Ona Volibear diyorlardı. İnsanlar zayıflamış, taştan kalelere ve sıcak ocaklara sığınmıştı. Oysa o, Freljord'un bu evcilleştirilmiş haline öfke duyuyordu. Onun gözünde gerçek güç, fırtınaya karşı durabilmekte değil, fırtınanın ta kendisi olabilmekteydi.</p>
+
+    <blockquote>"Benim adımla gökler gürler! Benim adımla dağlar yarılır! İnsanlar sadece merhamet dilenmeyi bilir, bense onlara fırtınanın öfkesini getireceğim!"</blockquote>
+
+    <p>Pek çok savaşçı onu durdurmak için dağlara tırmandı. Kimisi elinde Gerçek Buz'dan yapılmış silahlar taşıyordu, kimisi ise güneyin ateş büyüsüyle donanmıştı. Ancak Volibear'in kükremesi bulutları yardığında ve pençelerinden yıldırımlar fışkırdığında, hepsi birer birer toprağa düştü. O sadece devasa bir ayı değildi; o, Freljord'un dizginlenemez ilkel gücüydü.</p>
+
+    <p>Şimdi, Ursine şamanları yeniden toplanıyor. Kanla çizilmiş rünler ayazda parlıyor ve kurbanların feryatları rüzgara karışıyor. Volibear, topraklarını yeniden fethetmek için kış uykusundan tamamen uyandı. Ve bu kez, ne kardeşi Ornn ne de üç kız kardeşin kurduğu cılız ittifaklar onu durdurmaya yetmeyecek.</p>
+
+    <div class="back-nav">
+      <a href="index.html" class="back-btn">← Efsanelere Dön</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-logo">Runeterra Günlükleri</div>
+    <div class="footer-copy">© 2026 Mehmet Kadir Erten · Tüm hakları saklıdır</div>
+  </footer>
+
+</body>
+</html>

@@ -166,57 +166,28 @@
     .region-badge { font-family: 'Cinzel', serif; font-size: 11px; padding: 6px 14px; border-radius: 2px; border: 1px solid var(--rbo, rgba(200,151,42,0.3)); color: var(--rc, var(--gold)); background: var(--rb, rgba(200,151,42,0.06)); letter-spacing: 0.1em; transition: all 0.3s; }
     .region-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--rb, rgba(200,151,42,0.15)); filter: brightness(1.2); }
 
-    /* FOOTER */
-    footer { position: relative; z-index: 1; border-top: 1px solid rgba(200,151,42,0.12); padding: 48px 56px; text-align: center; }
-    .footer-logo { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 12px; }
-    .footer-quote { font-style: italic; color: var(--muted); font-size: 15px; margin-bottom: 24px; }
-    .footer-copy { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
-
-    .fade-in { opacity: 0; transform: translateY(35px); transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 768px) {
-      nav { padding: 16px 20px; } nav ul { gap: 20px; } .section-wrap { padding: 0 20px; } .about-box { grid-template-columns: 1fr; gap: 32px; padding: 32px 24px; } footer { padding: 40px 20px; }
-      .controls-container { flex-direction: column; align-items: stretch; }
-      .control-box { justify-content: space-between; }
-      .music-btn { bottom: 20px; right: 20px; padding: 10px 18px; }
-    }
-
-    /* =========================================
-       SİNEMATİK GEÇİŞ ARAYÜZÜ (YENİ EKLENDİ)
-       ========================================= */
+    /* SİNEMATİK GEÇİŞ ARAYÜZÜ */
     #page-transition-overlay {
       position: fixed; inset: 0; z-index: 9999999;
       pointer-events: none; visibility: hidden;
       display: flex; justify-content: center; align-items: center;
     }
-    
-    /* Arkadaki tam boy (Splash Art) görseli */
     .transition-splash {
       position: absolute; inset: 0;
       background-position: center top; background-size: cover; background-repeat: no-repeat;
-      opacity: 0; transform: scale(1.1); /* Başlangıçta biraz büyük (Zoom effect için) */
+      opacity: 0; transform: scale(1.1);
       transition: opacity 0.8s ease-out, transform 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    
-    /* Üstüne inen sinematik siyah ekran */
     .transition-blackout {
       position: absolute; inset: 0; background: #000;
       opacity: 0; transition: opacity 0.8s ease-in-out;
     }
-
-    /* Aktif olduğunda animasyonları başlatır */
     #page-transition-overlay.active { visibility: visible; pointer-events: all; }
-    #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1); } /* Resim netleşip küçülür (zoom-out) */
-    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; } /* Siyah ekran iner */
+    #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1); }
+    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; }
   </style>
 </head>
 <body>
-
-  <div id="page-transition-overlay">
-    <div class="transition-splash" id="transition-splash"></div>
-    <div class="transition-blackout" id="transition-blackout"></div>
-  </div>
 
   <div style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0; pointer-events: none; z-index: -99;">
     <div id="youtube-player"></div>
@@ -231,6 +202,11 @@
   </button>
 
   <div id="scroll-lock"></div>
+
+  <div id="page-transition-overlay">
+    <div class="transition-splash" id="transition-splash"></div>
+    <div class="transition-blackout" id="transition-blackout"></div>
+  </div>
 
   <nav>
     <div class="logo">Runeterra <span>Günlükleri</span></div>
@@ -344,6 +320,9 @@
   </footer>
 
   <script>
+    /* ---------------------------------------------------
+       1. HAYATİ KODLAR (Şampiyonları çizen sistem)
+       --------------------------------------------------- */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(el => {
         if (el.isIntersecting) el.target.classList.add('visible');
@@ -407,47 +386,30 @@
 
     // SİNEMATİK GEÇİŞ FONKSİYONU
     function triggerCinematicTransition(e, pageLink, championId) {
-      e.preventDefault(); // Anında geçişi engelle
-      
+      e.preventDefault(); 
       const overlay = document.getElementById('page-transition-overlay');
       const splash = document.getElementById('transition-splash');
-      
-      // Şampiyonun büyük splash art görselini arka plana çek
       splash.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championId}_0.jpg')`;
-      
-      // Animasyonu başlat (Görsel belirecek)
       overlay.classList.add('active');
-      
-      // 1.2 saniye sonra karartmayı (blackout) başlat
       setTimeout(() => {
         overlay.classList.add('blackout');
-        
-        // Ekran tamamen karardıktan sonra (0.8s) diğer sayfaya yönlendir
         setTimeout(() => {
           window.location.href = pageLink;
         }, 800);
-        
       }, 1200);
     }
 
     function renderChampions() {
       grid.innerHTML = '';
-      
       championsData.forEach((champ, index) => {
         const card = document.createElement('div');
         const pageLink = champ.id.toLowerCase() + '.html';
-        
         card.className = `story-card ${champ.regionClass} fade-in interactive-el`;
         card.dataset.index = index; 
-        
         card.innerHTML = `
           <div class="card-region-bar"></div>
           <div class="card-body">
-            <div class="card-meta">
-              <span class="card-region">${champ.regionDisplay}</span>
-              <span class="card-date">${champ.date}</span>
-            </div>
-            
+            <div class="card-meta"><span class="card-region">${champ.regionDisplay}</span><span class="card-date">${champ.date}</span></div>
             <div class="card-content-flex">
               <div class="img-container">
                 <img class="card-hover-img" src="https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/${champ.id}.png" alt="${champ.name}" loading="lazy">
@@ -460,55 +422,46 @@
                 <p class="card-excerpt">${champ.excerpt}</p>
               </div>
             </div>
-
             <a href="${pageLink}" class="card-link interactive-el">Okumaya Devam Et →</a>
           </div>
         `;
-        
-        // Karta tıklandığında sinematik geçişi başlat
         card.addEventListener('click', (e) => {
-          if(!e.target.classList.contains('card-link')) {
-            triggerCinematicTransition(e, pageLink, champ.id);
-          }
+          if(!e.target.classList.contains('card-link')) triggerCinematicTransition(e, pageLink, champ.id);
         });
-
-        // "Okumaya Devam Et" linkine tıklandığında sinematik geçişi başlat
         const readMoreLink = card.querySelector('.card-link');
-        readMoreLink.addEventListener('click', (e) => {
-          triggerCinematicTransition(e, pageLink, champ.id);
+        readMoreLink.addEventListener('click', (e) => triggerCinematicTransition(e, pageLink, champ.id));
+
+        // HER KART İÇİN ÖZEL HOVER SESİ (02.30 - 09.00)
+        card.addEventListener('mouseenter', () => {
+          const hoverSound = document.getElementById('hover-sound');
+          if (hoverSound) {
+            hoverSound.pause();
+            hoverSound.currentTime = 2.3; // Başlangıç: 2.30 saniye
+            hoverSound.play().catch(() => {});
+          }
         });
 
         grid.appendChild(card);
       });
-      
       document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
     renderChampions();
 
-    // GERİ DÖNÜŞTE SİYAH EKRAN KALMAMASI İÇİN GÜVENLİK KODU
-    window.addEventListener('pageshow', (event) => {
-      // Eğer kullanıcı tarayıcıdan "Geri" tuşuna basarsa ekranı temizler
-      if (event.persisted) {
-        const overlay = document.getElementById('page-transition-overlay');
-        overlay.classList.remove('active', 'blackout');
-      }
-    });
-
-    /* -------------------------------------------------------------------------
-       2. HOVER (ÜSTÜNE GELİNCE ÇIKAN SES) VE FİLTRELEME İŞLEMLERİ 
-       ------------------------------------------------------------------------- */
+    // SES DURDURMA MANTIĞI (9. SANİYEDE DURDUR)
     const hoverSound = document.getElementById('hover-sound');
     if (hoverSound) {
-      hoverSound.volume = 0.2;
-      document.querySelectorAll('.interactive-el').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          hoverSound.currentTime = 0; 
-          hoverSound.play().catch(() => {}); 
+        hoverSound.volume = 0.4;
+        hoverSound.addEventListener('timeupdate', function() {
+            if (this.currentTime >= 9.0) { // Bitiş: 09.00 saniye
+                this.pause();
+            }
         });
-      });
     }
 
+    /* -------------------------------------------------------------------------
+       2. FİLTRELEME VE SIRALAMA ALGORİTMASI 
+       ------------------------------------------------------------------------- */
     const filterSelect = document.getElementById('filter-region');
     const sortSelect = document.getElementById('sort-order');
 
@@ -516,93 +469,55 @@
       const cards = Array.from(grid.querySelectorAll('.story-card'));
       const filterValue = filterSelect.value;
       const sortValue = sortSelect.value;
-
       cards.forEach(card => {
-        if (filterValue === 'all' || card.classList.contains(filterValue)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
+        if (filterValue === 'all' || card.classList.contains(filterValue)) card.style.display = 'block';
+        else card.style.display = 'none';
       });
-
       let visibleCards = cards.filter(card => card.style.display === 'block');
-      
       visibleCards.sort((a, b) => {
-        if (sortValue === 'name-asc') {
-          return a.querySelector('.title-name').textContent.localeCompare(b.querySelector('.title-name').textContent, 'tr');
-        } else if (sortValue === 'name-desc') {
-          return b.querySelector('.title-name').textContent.localeCompare(a.querySelector('.title-name').textContent, 'tr');
-        } else if (sortValue === 'region') {
-          return a.querySelector('.card-region').textContent.localeCompare(b.querySelector('.card-region').textContent, 'tr');
-        } else {
-          return a.dataset.index - b.dataset.index;
-        }
+        if (sortValue === 'name-asc') return a.querySelector('.title-name').textContent.localeCompare(b.querySelector('.title-name').textContent, 'tr');
+        else if (sortValue === 'name-desc') return b.querySelector('.title-name').textContent.localeCompare(a.querySelector('.title-name').textContent, 'tr');
+        else if (sortValue === 'region') return a.querySelector('.card-region').textContent.localeCompare(b.querySelector('.card-region').textContent, 'tr');
+        else return a.dataset.index - b.dataset.index;
       });
-
-      visibleCards.forEach((card, index) => {
-        card.style.order = index;
-      });
+      visibleCards.forEach((card, index) => card.style.order = index);
     }
-
     filterSelect.addEventListener('change', updateGrid);
     sortSelect.addEventListener('change', updateGrid);
 
     /* -------------------------------------------------------------------------
-       3. YOUTUBE API (ÖZEL KARANTİNA)
+       3. YOUTUBE API (ARKA PLAN MÜZİĞİ)
        ------------------------------------------------------------------------- */
     try {
       const tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(tag);
-
       const musicBtn = document.getElementById('music-toggle');
-      const musicIcon = musicBtn.querySelector('.music-icon');
-      const musicText = musicBtn.querySelector('.music-text');
       let isMusicPlaying = false; 
-
       musicBtn.addEventListener('click', () => {
-        if (!window.ytPlayer || typeof window.ytPlayer.playVideo !== 'function') {
-          alert("Müzik bağlantısı yükleniyor... Lütfen bekleyip tekrar deneyin.");
-          return;
-        }
-
+        if (!window.ytPlayer || typeof window.ytPlayer.playVideo !== 'function') return;
         if (!isMusicPlaying) {
           window.ytPlayer.playVideo();
-          musicIcon.textContent = '🔊';
-          musicText.textContent = 'Sesi Kapat';
+          musicBtn.querySelector('.music-icon').textContent = '🔊';
+          musicBtn.querySelector('.music-text').textContent = 'Sesi Kapat';
           musicBtn.classList.add('playing');
           isMusicPlaying = true;
         } else {
           window.ytPlayer.pauseVideo();
-          musicIcon.textContent = '🔇';
-          musicText.textContent = 'Sesi Aç';
+          musicBtn.querySelector('.music-icon').textContent = '🔇';
+          musicBtn.querySelector('.music-text').textContent = 'Sesi Aç';
           musicBtn.classList.remove('playing');
           isMusicPlaying = false;
         }
       });
-
       window.onYouTubeIframeAPIReady = function() {
         window.ytPlayer = new YT.Player('youtube-player', {
-          height: '200', 
-          width: '200',
-          videoId: 'aPf9EcHbWHE', 
-          playerVars: {
-            'autoplay': 0,
-            'controls': 0,
-            'disablekb': 1,
-            'fs': 0,
-            'start': 2
-          },
-          events: {
-            'onReady': function(event) {
-              event.target.setVolume(30); 
-            }
-          }
+          height: '200', width: '200', videoId: 'aPf9EcHbWHE', 
+          playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'start': 2 },
+          events: { 'onReady': (event) => event.target.setVolume(30) }
         });
       };
-    } catch (error) {
-      console.error("YouTube oynatıcı yüklenemedi:", error);
-    }
+    } catch (e) {}
   </script>
 </body>
 </html>

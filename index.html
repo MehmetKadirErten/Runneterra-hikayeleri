@@ -8,172 +8,83 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg: #06080f; --bg2: #090d18; --card: #0b1020; --border: #1a2035;
-      --gold: #c8972a; --gold2: #e8c060; --blue: #4a9eff; --text: #d4c9b8; --muted: #6a7080;
+      --gold: #c8972a; --gold2: #e8c060; --text: #d4c9b8; --muted: #6a7080;
     }
-
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Crimson Pro', serif; font-size: 18px; line-height: 1.8; overflow-x: hidden; margin: 0; }
 
-    #scroll-lock { position: fixed; inset: 0; z-index: 999999; animation: removeLock 0s linear 4.5s forwards; }
-    @keyframes removeLock { to { visibility: hidden; pointer-events: none; } }
-
+    /* AMBİYANS */
     @keyframes ambientGlow { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
     body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(74,158,255,0.05) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(200,151,42,0.07) 0%, transparent 60%); pointer-events: none; z-index: 0; animation: ambientGlow 10s ease-in-out infinite; }
 
     /* NAV MENÜSÜ */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.92); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(200,151,42,0.15); opacity: 0; animation: navFadeDown 0.8s ease-out 4.2s forwards; }
-    @keyframes navFadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    .logo { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; transition: text-shadow 0.3s; }
-    .logo:hover { text-shadow: 0 0 15px rgba(200,151,42,0.5); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.92); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(200,151,42,0.15); }
+    .logo { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; }
     .logo span { color: var(--text); font-weight: 400; }
     nav ul { display: flex; gap: 36px; list-style: none; }
-    nav a { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; }
-    nav a:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,151,42,0.4); }
+    nav a { font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; }
 
     /* HERO */
-    #hero { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 40px 80px; }
-    .rune-divider { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; font-size: 18px; }
-    .rune-icon { display: inline-block; color: var(--gold); will-change: transform, opacity, filter, text-shadow; animation: introStar 4s linear forwards, pulseRune 3s infinite ease-in-out 4s; }
-    @keyframes introStar {
-      0%   { transform: translate(0vw, 25vh) scale(12) rotate(0deg); opacity: 0; filter: blur(0px) brightness(1); text-shadow: 0 0 10px var(--gold); }
-      5%   { transform: translate(0vw, 25vh) scale(13) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1.2); text-shadow: 0 0 30px var(--gold2); }
-      15%  { transform: translate(0vw, 25vh) scale(14) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1.5); text-shadow: 0 0 60px var(--gold2); }
-      20%  { transform: translate(8vw, 24vh) scale(12) rotate(45deg); filter: blur(1px) brightness(1.5); }
-      25%  { transform: translate(16vw, 22vh) scale(10) rotate(90deg); filter: blur(2px) brightness(1.5); }
-      30%  { transform: translate(23vw, 19vh) scale(8) rotate(135deg); filter: blur(3px) brightness(1.5); }
-      35%  { transform: translate(29vw, 15vh) scale(6) rotate(180deg); }
-      40%  { transform: translate(33vw, 11vh) scale(4.5) rotate(225deg); }
-      45%  { transform: translate(35vw, 7vh) scale(3.5) rotate(270deg); filter: blur(3px) brightness(1.5); text-shadow: 0 0 20px var(--gold2); }
-      50%  { transform: translate(34vw, 3.5vh) scale(2.5) rotate(315deg); filter: blur(2px); }
-      55%  { transform: translate(31vw, 1vh) scale(2.0) rotate(360deg); filter: blur(1px); }
-      60%  { transform: translate(26vw, -0.5vh) scale(1.6) rotate(405deg); filter: blur(0.5px); }
-      65%  { transform: translate(19vw, -1.5vh) scale(1.3) rotate(450deg); filter: blur(0px); }
-      70%  { transform: translate(10vw, -1.5vh) scale(1.1) rotate(495deg); }
-      75%  { transform: translate(0vw, 0vh) scale(1) rotate(540deg); opacity: 1; color: var(--gold); text-shadow: 0 0 5px var(--gold); filter: brightness(1); }
-      80%  { transform: translate(0vw, 0vh) scale(2.8) rotate(540deg); color: #fff; text-shadow: 0 0 60px #fff, 0 0 120px var(--gold2); filter: brightness(2); }
-      100% { transform: translate(0vw, 0vh) scale(1) rotate(540deg); opacity: 1; color: var(--gold); text-shadow: 0 0 5px var(--gold); filter: brightness(1); }
-    }
-    @keyframes pulseRune { 0%, 100% { text-shadow: 0 0 5px var(--gold); transform: scale(1); } 50% { text-shadow: 0 0 20px var(--gold2); transform: scale(1.2); } }
-    .rune-line { display: block; width: 0px; height: 1px; opacity: 0; animation: expandLine 0.6s cubic-bezier(0.2, 1, 0.2, 1) 3.2s forwards; }
-    .rune-line.left { background: linear-gradient(90deg, transparent, var(--gold)); }
-    .rune-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
-    @keyframes expandLine { from { width: 0px; opacity: 0; } to { width: 80px; opacity: 1; } }
+    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 40px 80px; }
+    h1 { font-family: 'Cinzel', serif; font-size: clamp(42px, 7vw, 88px); font-weight: 900; color: #fff; margin-bottom: 30px; }
+    .hero-cta { padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); color: var(--gold); text-decoration: none; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
 
-    @keyframes textFadeUp { from { opacity: 0; transform: translateY(30px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0px); } }
-    .hero-sub { font-family: 'Cinzel', serif; font-size: clamp(14px, 2vw, 20px); font-weight: 400; color: var(--gold); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 32px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.3s forwards; }
-    h1 { font-family: 'Cinzel', serif; font-size: clamp(42px, 7vw, 88px); font-weight: 900; line-height: 1.05; letter-spacing: 0.04em; color: #fff; text-shadow: 0 0 60px rgba(200,151,42,0.25); margin-bottom: 8px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.5s forwards; }
-    .hero-desc { font-size: 18px; font-style: italic; color: var(--muted); max-width: 560px; line-height: 1.8; margin-bottom: 52px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.7s forwards; }
-    
-    @keyframes buttonShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
-    .hero-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden; opacity: 0; animation: textFadeUp 0.8s ease-out 3.9s forwards; }
-    .hero-cta::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(200,151,42,0.4), transparent); transform: skewX(-25deg); animation: buttonShine 4s infinite; }
-    .hero-cta:hover { border-color: var(--gold); color: var(--gold2); background: rgba(200,151,42,0.07); box-shadow: 0 0 20px rgba(200,151,42,0.2); }
+    /* KONTROLLER */
+    .controls-wrapper { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+    .audio-btn { background: rgba(6, 8, 15, 0.85); border: 1px solid rgba(200, 151, 42, 0.3); color: var(--gold); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-family: 'Cinzel', serif; font-size: 10px; }
+    .audio-btn.active { border-color: var(--gold2); color: #fff; }
 
-    @keyframes hintFadeUp { from { opacity: 0; transform: translateX(-50%) translateY(30px); filter: blur(4px); } to { opacity: 1; transform: translateX(-50%) translateY(0); filter: blur(0px); } }
-    .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0; animation: hintFadeUp 0.8s ease-out 4.2s forwards, floatY 2.5s ease-in-out infinite 5.0s; }
-    .scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--gold), transparent); }
-    @keyframes floatY { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-
-    /* SES KONTROL BUTONLARI */
-    .controls-wrapper {
-      position: fixed; bottom: 30px; right: 30px; z-index: 1000;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .audio-btn {
-      background: rgba(6, 8, 15, 0.85); backdrop-filter: blur(10px);
-      border: 1px solid rgba(200, 151, 42, 0.3); color: var(--gold);
-      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.1em;
-      padding: 10px 20px; border-radius: 50px; cursor: pointer;
-      display: flex; align-items: center; gap: 8px; text-transform: uppercase;
-      transition: all 0.3s ease; opacity: 0; animation: hintFadeUp 0.8s ease-out 4.5s forwards;
-    }
-    .audio-btn:hover { background: rgba(200, 151, 42, 0.15); border-color: var(--gold); }
-    .audio-btn.active { border-color: var(--gold2); color: #fff; box-shadow: 0 0 15px rgba(200, 151, 42, 0.2); }
-
-    /* RUNETERRA RENK DEĞİŞKENLERİ */
-    .demacia    { --rc:#4a9eff; --rb:rgba(74,158,255,0.12);  --rbo:rgba(74,158,255,0.4); }
-    .noxus      { --rc:#cc3333; --rb:rgba(204,51,51,0.12);   --rbo:rgba(204,51,51,0.4); }
-    .ionia      { --rc:#c87eff; --rb:rgba(200,126,255,0.12); --rbo:rgba(200,126,255,0.4); }
-    .piltover   { --rc:#f0a020; --rb:rgba(240,160,32,0.12);  --rbo:rgba(240,160,32,0.4); }
-    .freljord   { --rc:#7bcfff; --rb:rgba(123,207,255,0.12); --rbo:rgba(123,207,255,0.4); }
-    .shadow     { --rc:#15c9b1; --rb:rgba(21,201,177,0.12);  --rbo:rgba(21,201,177,0.4); }
-    .zaun       { --rc:#2de370; --rb:rgba(45,227,112,0.12);  --rbo:rgba(45,227,112,0.4); }
-    .bilgewater { --rc:#c84b31; --rb:rgba(200,75,49,0.12);   --rbo:rgba(200,75,49,0.4); }
-    .shurima    { --rc:#e6c229; --rb:rgba(230,194,41,0.12);  --rbo:rgba(230,194,41,0.4); }
-    .targon     { --rc:#7b68ee; --rb:rgba(123,104,238,0.12); --rbo:rgba(123,104,238,0.4); }
-    .void       { --rc:#b959ff; --rb:rgba(185,89,255,0.12);  --rbo:rgba(185,89,255,0.4); }
-    .bandle     { --rc:#4caf50; --rb:rgba(76,175,80,0.12);   --rbo:rgba(76,175,80,0.4); }
-    .ixtal      { --rc:#00c853; --rb:rgba(0,200,83,0.12);    --rbo:rgba(0,200,83,0.4); }
-
-    /* HİKAYE KARTLARI */
-    .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; padding-bottom: 100px; }
-    .story-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.4s, border-color 0.4s, box-shadow 0.4s; }
-    .story-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--rbo); box-shadow: 0 0 30px var(--rb); }
-    .card-region-bar { height: 3px; width: 100%; background: var(--rc); }
-    .card-body { padding: 28px; }
-    .card-meta { display: flex; justify-content: space-between; margin-bottom: 16px; }
-    .card-content-flex { display: flex; align-items: flex-start; margin-bottom: 20px; }
-    .img-container { width: 0px; opacity: 0; overflow: hidden; transition: width 0.4s, opacity 0.3s; flex-shrink: 0; }
-    .story-card:hover .img-container { width: 86px; opacity: 1; }
-    .card-hover-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; margin-right: 14px; border: 1px solid var(--rc); }
-    .card-title-container { display: grid; margin-bottom: 8px; }
-    .card-title-container > div { grid-area: 1 / 1; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; transition: opacity 0.4s, transform 0.4s; }
-    .title-name { color: #fff; opacity: 1; }
-    .title-epic { color: var(--rc); opacity: 0; transform: translateY(10px); }
-    .story-card:hover .title-name { opacity: 0; transform: translateY(-10px); }
-    .story-card:hover .title-epic { opacity: 1; transform: translateY(0); }
-    .card-region { color: var(--rc); background: var(--rb); border-color: var(--rbo); padding: 4px 10px; border-radius: 2px; border: 1px solid; font-size: 10px; text-transform: uppercase; }
-    .card-excerpt { font-size: 15px; color: var(--muted); font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 72px; }
-    .card-link { color: var(--gold); text-decoration: none; font-size: 11px; margin-top: 15px; display: block; transition: color 0.3s; }
-    .story-card:hover .card-link { color: var(--rc); }
+    /* GRID VE KARTLAR */
+    .section-wrap { max-width: 1080px; margin: 0 auto; padding: 48px; }
+    .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .story-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.3s; position: relative; }
+    .story-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+    .card-body { padding: 25px; }
+    .card-title-container { font-family: 'Cinzel', serif; font-size: 18px; color: #fff; margin-bottom: 10px; }
+    .card-excerpt { font-size: 14px; color: var(--muted); font-style: italic; }
 
     /* =========================================
-       SİNEMATİK GEÇİŞ SİSTEMİ 
+       ÖZEL VOLIBEAR SİNEMATİK SİSTEMİ
        ========================================= */
-    #page-transition-overlay { position: fixed; inset: 0; z-index: 9999999; pointer-events: none; visibility: hidden; display: flex; justify-content: center; align-items: center; }
+    #boss-overlay {
+      position: fixed; inset: 0; z-index: 9999999;
+      background: #000; visibility: hidden; opacity: 0;
+      display: flex; justify-content: center; align-items: center;
+      transition: opacity 0.5s;
+    }
+    #boss-overlay.active { visibility: visible; opacity: 1; }
     
-    .transition-splash {
-      position: absolute; inset: 0;
+    /* Volibear'in Yıldırım Çakan Silüeti */
+    .volibear-figure {
+      width: 100%; height: 100%;
       background-position: center top; background-size: cover;
-      opacity: 0; transform: scale(1.15) translateY(20px);
-      filter: blur(5px) brightness(1.2);
-      transition: opacity 0.7s, transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 1s;
+      opacity: 0;
+      /* Siyah beyaz ve aşırı parlak (Silüet efekti) */
+      filter: grayscale(1) brightness(100) contrast(1000%); 
     }
+    /* Yıldırım Çakma Anı */
+    .volibear-figure.flash { opacity: 1; }
 
-    /* Yıldırım Çarpma Efekti (B&W Silhouette) */
-    .transition-splash.flash {
-      filter: grayscale(1) brightness(10) contrast(300%) !important;
-      transform: scale(1.02) !important;
-      transition: none !important;
-    }
-
-    #page-transition-overlay.active { visibility: visible; pointer-events: all; }
-    #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px) brightness(1); }
-    .transition-blackout { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 1s; }
-    #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; }
-
+    .fade-in { opacity: 0; transform: translateY(20px); transition: 0.6s all; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
-  <div style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0; pointer-events: none; z-index: -99;">
-    <div id="youtube-player"></div>
-  </div>
+  <div id="youtube-player" style="position:fixed; visibility:hidden;"></div>
   <audio id="hover-sound"><source src="lol-hover.mp3" type="audio/mpeg"></audio>
   <audio id="volibear-voice"><source src="volibear-voice.mp3" type="audio/mpeg"></audio>
   <audio id="lightning-sfx"><source src="lightning.mp3" type="audio/mpeg"></audio>
 
   <div class="controls-wrapper">
-    <button id="music-toggle" class="audio-btn"><span>🔇</span> <span>Müzik</span></button>
-    <button id="sfx-toggle" class="audio-btn active"><span>🔊</span> <span>Efektler</span></button>
+    <button id="music-toggle" class="audio-btn"><span>🔇</span> Müzik</button>
+    <button id="sfx-toggle" class="audio-btn active"><span>🔊</span> Efektler</button>
   </div>
 
-  <div id="page-transition-overlay">
-    <div class="transition-splash" id="transition-splash"></div>
-    <div class="transition-blackout" id="transition-blackout"></div>
+  <div id="boss-overlay">
+    <div class="volibear-figure" id="volibear-figure"></div>
   </div>
 
   <nav>
@@ -182,149 +93,131 @@
   </nav>
 
   <section id="hero">
-    <div class="rune-divider"><span class="rune-line left"></span><span class="rune-icon">✦</span><span class="rune-line right"></span></div>
-    <p class="hero-sub">Runeterra Günlükleri</p>
-    <h1>Efsaneler<br>Yaşıyor</h1>
-    <p class="hero-desc">Demacia'dan Freljord'a — hikayeler burada yaşıyor.</p>
-    <a href="#hikayeler" class="hero-cta">Keşfet ✦</a>
+    <h1>Efsaneler Yaşıyor</h1>
+    <a href="#hikayeler" class="hero-cta">Keşfet</a>
   </section>
 
   <section id="hikayeler" class="section-wrap">
-    <div class="section-title fade-in"><h2>Efsaneler</h2><div class="gold-rule"></div></div>
-    <div class="controls-container fade-in">
-        <select id="filter-region"><option value="all">Tüm Bölgeler</option><option value="freljord">Freljord</option><option value="demacia">Demacia</option><option value="noxus">Noxus</option></select>
-        <select id="sort-order"><option value="default">En Yeni</option><option value="name-asc">A-Z</option></select>
-    </div>
     <div class="stories-grid" id="main-grid"></div>
   </section>
 
   <script>
-    /* 1. VERİ */
+    /* 1. ŞAMPİYON VERİSİ VE RENDER */
     const championsData = [
-      { id: "Volibear", name: "Volibear", epic: "Fırtınanın Pençeleri", regionClass: "freljord", regionDisplay: "Freljord", date: "15 Mayıs 2026", excerpt: "Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu..." },
-      { id: "Garen", name: "Garen", epic: "Demacia'nın Kudreti", regionClass: "demacia", regionDisplay: "Demacia", date: "10 Mayıs 2026", excerpt: "Demacia'nın görkemli surları..." },
-      { id: "Darius", name: "Darius", epic: "Noxus'un Eli", regionClass: "noxus", regionDisplay: "Noxus", date: "02 Mayıs 2026", excerpt: "Güç, kimin haklı olduğunu belirleyen tek gerçekti." }
+      { id: "Volibear", name: "Volibear", regionClass: "freljord", excerpt: "Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu..." },
+      { id: "Garen", name: "Garen", regionClass: "demacia", excerpt: "Demacia'nın görkemli surları her zaman ayakta kalacak." },
+      { id: "Darius", name: "Darius", regionClass: "noxus", excerpt: "Noxus'un gücü sarsılmaz bir iradeden gelir." }
     ];
 
-    /* 2. SİNEMATİK GEÇİŞ MANTIĞI (VOLIBEAR ÖZEL) */
-    function triggerCinematicTransition(e, pageLink, championId) {
-      e.preventDefault();
-      const overlay = document.getElementById('page-transition-overlay');
-      const splash = document.getElementById('transition-splash');
-      
-      splash.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championId}_0.jpg')`;
-      overlay.classList.add('active');
+    const grid = document.getElementById('main-grid');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
 
-      if (championId === 'Volibear') {
+    function render() {
+      grid.innerHTML = '';
+      championsData.forEach(champ => {
+        const card = document.createElement('div');
+        card.className = `story-card fade-in`;
+        card.innerHTML = `
+          <div class="card-body">
+            <div class="card-title-container">${champ.name}</div>
+            <p class="card-excerpt">${champ.excerpt}</p>
+          </div>`;
+        
+        card.addEventListener('click', () => handleTransition(champ.id));
+        card.addEventListener('mouseenter', () => playHover());
+        
+        grid.appendChild(card);
+        observer.observe(card);
+      });
+    }
+    render();
+
+    /* 2. SİNEMATİK GEÇİŞ MANTIĞI */
+    function handleTransition(id) {
+      if (id === 'Volibear') {
+        const overlay = document.getElementById('boss-overlay');
+        const figure = document.getElementById('volibear-figure');
         const voice = document.getElementById('volibear-voice');
         const lightning = document.getElementById('lightning-sfx');
-        
-        // 0.5s: Replik başlar
-        setTimeout(() => { voice.volume = 0.5; voice.play(); }, 500);
 
-        // 1.5s: İlk Yıldırım ve Siyah/Beyaz Flaş
+        // Volibear Silüet Resmini hazırla
+        figure.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Volibear_0.jpg')`;
+        overlay.classList.add('active');
+
+        // 1. Replik başlar
+        voice.volume = 0.5; voice.play();
+
+        // 2. İLK YILDIRIM (Hemen başlar veya 0.5s sonra)
         setTimeout(() => {
           if(isSfxEnabled) { lightning.currentTime = 0; lightning.play(); }
-          splash.classList.add('flash');
-          setTimeout(() => splash.classList.remove('flash'), 150);
-        }, 1500);
-
-        // 2.5s: İkinci Yıldırım ve Siyah/Beyaz Flaş
-        setTimeout(() => {
-          if(isSfxEnabled) { lightning.currentTime = 0; lightning.play(); }
-          splash.classList.add('flash');
-          setTimeout(() => splash.classList.remove('flash'), 150);
-        }, 2500);
-
-        // 4.0s: Tam Kararma ve Diğer Sayfaya Geçiş
-        setTimeout(() => {
-          overlay.classList.add('blackout');
-          setTimeout(() => window.location.href = pageLink, 1000);
-        }, 4000);
+          figure.classList.add('flash'); // Siyah beyaz figür gözükür
+          
+          // Ses bittikten sonra figür kaybolur
+          lightning.onended = () => {
+            figure.classList.remove('flash');
+            
+            // 3. SES BİTTİKTEN 1 SANİYE SONRA TEKRAR
+            setTimeout(() => {
+              if(isSfxEnabled) { lightning.currentTime = 0; lightning.play(); }
+              figure.classList.add('flash'); // Figür tekrar gözükür
+              
+              // İkinci ses bittikten sonra her şeyi kapat ve geç
+              lightning.onended = () => {
+                figure.classList.remove('flash');
+                setTimeout(() => window.location.href = 'volibear.html', 500);
+              };
+            }, 1000);
+          };
+        }, 500);
 
       } else {
-        // Diğerleri için normal akıcı geçiş
-        setTimeout(() => {
-          overlay.classList.add('blackout');
-          setTimeout(() => window.location.href = pageLink, 800);
-        }, 1200);
+        window.location.href = id.toLowerCase() + '.html';
       }
     }
 
-    /* 3. KARTLARI ÇİZME */
-    const grid = document.getElementById('main-grid');
-    function renderChampions() {
-      grid.innerHTML = '';
-      championsData.forEach((champ, index) => {
-        const card = document.createElement('div');
-        const pageLink = champ.id.toLowerCase() + '.html';
-        card.className = `story-card ${champ.regionClass} fade-in`;
-        card.innerHTML = `
-          <div class="card-region-bar"></div>
-          <div class="card-body">
-            <div class="card-meta"><span class="card-region">${champ.regionDisplay}</span></div>
-            <div class="card-content-flex">
-              <div class="img-container"><img class="card-hover-img" src="https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/${champ.id}.png" loading="lazy"></div>
-              <div class="card-text-wrapper">
-                <div class="card-title-container"><div class="title-name">${champ.name}</div><div class="title-epic">${champ.epic}</div></div>
-                <p class="card-excerpt">${champ.excerpt}</p>
-              </div>
-            </div>
-            <a href="${pageLink}" class="card-link">Okumaya Devam Et →</a>
-          </div>`;
-
-        card.addEventListener('click', (e) => { if(!e.target.classList.contains('card-link')) triggerCinematicTransition(e, pageLink, champ.id); });
-        card.querySelector('.card-link').addEventListener('click', (e) => triggerCinematicTransition(e, pageLink, champ.id));
-
-        // Hover Sesi (2.50. saniyeden başlar)
-        card.addEventListener('mouseenter', () => {
-          const sfx = document.getElementById('hover-sound');
-          if (isSfxEnabled && sfx) {
-            sfx.pause();
-            sfx.currentTime = 2.5; 
-            sfx.play().catch(() => {});
-          }
-        });
-        grid.appendChild(card);
-      });
-    }
-    renderChampions();
-
-    /* 4. SES AYARLARI (%10 MÜZİK, %15 EFEKT) */
+    /* 3. SES SİSTEMİ */
     let ytPlayer, isMusicPlaying = false, isSfxEnabled = true;
-    const musicBtn = document.getElementById('music-toggle'), sfxBtn = document.getElementById('sfx-toggle');
+    const hoverSound = document.getElementById('hover-sound');
+    
+    function playHover() {
+      if (isSfxEnabled) {
+        hoverSound.pause();
+        hoverSound.currentTime = 2.5; // 2.5 saniyeden başlar
+        hoverSound.play().catch(()=>{});
+      }
+    }
+    
+    hoverSound.addEventListener('timeupdate', function() {
+      if (this.currentTime >= 9.0) this.pause(); // 9.0 saniyede durur
+    });
 
+    // YouTube Müzik (Sesi %10 yaptık)
+    const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
     window.onYouTubeIframeAPIReady = function() {
       ytPlayer = new YT.Player('youtube-player', {
-        height: '200', width: '200', videoId: 'aPf9EcHbWHE',
+        height: '0', width: '0', videoId: 'aPf9EcHbWHE',
         playerVars: { 'autoplay': 0, 'controls': 0, 'start': 2 },
-        events: { 'onReady': (e) => e.target.setVolume(10) } // MÜZİK %10
+        events: { 'onReady': (e) => e.target.setVolume(10) }
       });
     };
 
-    musicBtn.addEventListener('click', () => {
-      if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') return;
+    document.getElementById('music-toggle').onclick = function() {
+      if (!ytPlayer) return;
       if (!isMusicPlaying) {
-        ytPlayer.playVideo();
-        musicBtn.innerHTML = '<span>🔊</span> <span>Müzik</span>';
-        isMusicPlaying = true;
+        ytPlayer.playVideo(); this.classList.add('active'); this.innerHTML = '🔊 Müzik'; isMusicPlaying = true;
       } else {
-        ytPlayer.pauseVideo();
-        musicBtn.innerHTML = '<span>🔇</span> <span>Müzik</span>';
-        isMusicPlaying = false;
+        ytPlayer.pauseVideo(); this.classList.remove('active'); this.innerHTML = '🔇 Müzik'; isMusicPlaying = false;
       }
-    });
+    };
 
-    sfxBtn.addEventListener('click', () => {
+    document.getElementById('sfx-toggle').onclick = function() {
       isSfxEnabled = !isSfxEnabled;
-      sfxBtn.innerHTML = isSfxEnabled ? '<span>🔊</span> <span>Efektler</span>' : '<span>🔇</span> <span>Efektler</span>';
-      sfxBtn.classList.toggle('active');
-    });
-
-    document.getElementById('hover-sound').volume = 0.15; // EFEKT %15
-    document.getElementById('hover-sound').addEventListener('timeupdate', function() { if(this.currentTime >= 9) this.pause(); });
-
-    const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(tag);
+      this.classList.toggle('active');
+      this.innerHTML = isSfxEnabled ? '🔊 Efektler' : '🔇 Efektler';
+    };
   </script>
 </body>
 </html>

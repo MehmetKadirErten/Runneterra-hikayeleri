@@ -43,6 +43,7 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      will-change: transform, opacity;
     }
 
     .intro-clouds {
@@ -54,13 +55,13 @@
         radial-gradient(ellipse 90% 50% at 85% 60%, #060d18 0%, transparent 55%),
         #000;
       animation: cloudDrift 6s ease-in-out infinite alternate;
+      will-change: transform;
     }
     @keyframes cloudDrift {
       from { transform: scale(1) translateX(0); }
       to   { transform: scale(1.04) translateX(-8px); }
     }
 
-    /* Canvas yıldırım katmanı */
     #lightningCanvas {
       position: absolute;
       inset: 0;
@@ -68,7 +69,6 @@
       height: 100%;
     }
 
-    /* Flaş overlay */
     #flash {
       position: absolute;
       inset: 0;
@@ -76,21 +76,21 @@
       opacity: 0;
       pointer-events: none;
       mix-blend-mode: screen;
+      will-change: opacity;
     }
 
-    /* Dönen rün çemberi */
     .rune-ring {
       position: absolute;
       border-radius: 50%;
       border: 1px solid rgba(123,207,255,0.08);
       pointer-events: none;
+      will-change: transform;
     }
     .rune-ring:nth-child(1) { width: 520px; height: 520px; top:50%; left:50%; transform:translate(-50%,-50%); animation: spin 12s linear infinite; }
     .rune-ring:nth-child(2) { width: 420px; height: 420px; top:50%; left:50%; transform:translate(-50%,-50%); border-style:dashed; border-color:rgba(200,151,42,0.07); animation: spin 8s linear infinite reverse; }
     .rune-ring:nth-child(3) { width: 320px; height: 320px; top:50%; left:50%; transform:translate(-50%,-50%); animation: spin 5s linear infinite; border-color:rgba(123,207,255,0.06); }
     @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
-    /* İçerik */
     .intro-content {
       position: relative;
       z-index: 2;
@@ -102,16 +102,18 @@
       to   { opacity:1; transform:translateY(0) scale(1); }
     }
 
+    /* 🔥 CPU Yoran Gölge Animasyonu Kaldırıldı, GPU Hızlandırmalı Scale Eklendi 🔥 */
     .intro-icon {
       font-size: 72px;
       display: block;
       margin-bottom: 20px;
-      filter: drop-shadow(0 0 24px var(--ice)) drop-shadow(0 0 60px rgba(123,207,255,0.35));
+      filter: drop-shadow(0 0 24px rgba(123,207,255,0.5));
+      will-change: transform, opacity;
       animation: iconPulse 2s ease-in-out infinite;
     }
     @keyframes iconPulse {
-      0%,100% { filter: drop-shadow(0 0 18px var(--ice)) drop-shadow(0 0 40px rgba(123,207,255,0.25)); }
-      50%      { filter: drop-shadow(0 0 48px var(--ice)) drop-shadow(0 0 90px rgba(123,207,255,0.55)); }
+      0%,100% { transform: scale(1); opacity: 0.8; }
+      50%     { transform: scale(1.1); opacity: 1; }
     }
 
     .intro-title {
@@ -157,14 +159,17 @@
     }
     .intro-skip:hover { color: var(--ice); border-color: rgba(123,207,255,0.45); background: rgba(123,207,255,0.04); }
 
+    /* 🔥 Width Animasyonu CPU yorar, transform: scaleX ile GPU'ya aktarıldı 🔥 */
     #introProgress {
       position: absolute;
       bottom: 0; left: 0;
       height: 2px;
-      width: 0%;
+      width: 100%;
       background: linear-gradient(90deg, var(--ice), var(--gold));
       box-shadow: 0 0 12px var(--ice);
-      transition: width 0.1s linear;
+      transform-origin: left;
+      transform: scaleX(0);
+      will-change: transform;
     }
 
     #intro.exiting { animation: introOut 0.9s ease-in forwards; }
@@ -178,7 +183,6 @@
     #main-content { opacity:0; transition: opacity 1s ease 0.4s; }
     #main-content.visible { opacity:1; }
 
-    /* NAV */
     nav {
       position: fixed; top:0; left:0; right:0; z-index:100;
       display: flex; justify-content:space-between; align-items:center;
@@ -193,7 +197,6 @@
     nav a { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); text-decoration:none; letter-spacing:0.15em; text-transform:uppercase; transition:color 0.25s; }
     nav a:hover { color:var(--ice); }
 
-    /* HERO */
     .story-hero {
       position: relative;
       height: 70vh;
@@ -211,6 +214,7 @@
       background: url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Volibear_0.jpg') center top / cover no-repeat;
       transform: scale(1.05);
       animation: heroDrift 18s ease-in-out infinite alternate;
+      will-change: transform;
     }
     @keyframes heroDrift {
       from { transform: scale(1.05) translateY(0); }
@@ -222,7 +226,6 @@
       background: linear-gradient(to bottom, rgba(6,8,15,0.2) 0%, rgba(6,8,15,0.65) 55%, var(--bg) 100%);
     }
 
-    /* Canvas yıldırım hero */
     #heroCanvas {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
@@ -263,7 +266,6 @@
       animation: tagIn 0.7s ease-out 0.6s both;
     }
 
-    /* Scroll hint */
     .scroll-hint {
       position: absolute; bottom: 30px; left: 50%;
       transform: translateX(-50%);
@@ -296,7 +298,8 @@
       margin-bottom: 30px; font-size: 20px; line-height: 1.88;
       color: #ddd5c5; text-align: justify;
       opacity: 0; transform: translateY(18px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      will-change: transform, opacity;
     }
     .story-article p.visible { opacity:1; transform:translateY(0); }
 
@@ -308,7 +311,8 @@
       color: #fff; font-family: 'Cinzel', serif; line-height: 1.6;
       position: relative;
       opacity: 0; transform: translateX(-18px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      will-change: transform, opacity;
     }
     blockquote.visible { opacity:1; transform:translateX(0); }
     blockquote::before {
@@ -346,220 +350,11 @@
     .footer-logo { font-family:'Cinzel',serif; font-size:18px; font-weight:900; color:var(--gold); letter-spacing:0.1em; margin-bottom:10px; }
     .footer-copy { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); letter-spacing:0.1em; }
 
-    /* ── KAR PARÇACIKLARI ── */
-    #snow-container {
-      position: fixed; inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      overflow: hidden;
-    }
-    .snowflake {
-      position: absolute;
-      top: -10px;
-      border-radius: 50%;
-      background: white;
-      opacity: 0;
-      animation: snowFall linear infinite;
-    }
-    @keyframes snowFall {
-      0%   { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
-      5%   { opacity: 0.7; }
-      90%  { opacity: 0.3; }
-      100% { transform: translateY(105vh) translateX(var(--drift)) rotate(360deg); opacity: 0; }
-    }
-
-    /* ── SOSYAL MEDYA ── */
-    .social-bar {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-    .social-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
-      border: 1px solid rgba(200,151,42,0.25);
-      border-radius: 3px;
-      color: var(--muted);
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.3s;
-      background: rgba(255,255,255,0.02);
-    }
-    .social-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,151,42,0.05); transform: translateY(-2px); }
-    .social-link svg { width:15px; height:15px; fill:currentColor; flex-shrink:0; }
-
-    /* ── YORUMLAR ── */
-    .comments-section {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 0 24px 100px;
-    }
-
-    .comments-title {
-      font-family: 'Cinzel', serif;
-      font-size: 20px;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: 0.06em;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .comments-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(123,207,255,0.2), transparent);
-    }
-
-    .comments-sub {
-      font-size: 14px;
-      color: var(--muted);
-      font-style: italic;
-      margin-bottom: 36px;
-    }
-
-    /* Yorum formu */
-    .comment-form {
-      background: rgba(11,16,32,0.8);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 28px;
-      margin-bottom: 40px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label {
-      font-family: 'Cinzel', serif;
-      font-size: 10px;
-      color: var(--ice);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      background: rgba(4,6,14,0.8);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 10px 14px;
-      color: var(--text);
-      font-family: 'Crimson Pro', serif;
-      font-size: 17px;
-      outline: none;
-      transition: border-color 0.25s;
-      resize: none;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus { border-color: rgba(123,207,255,0.4); }
-    .form-group textarea { min-height: 100px; }
-
-    .submit-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 32px;
-      background: rgba(123,207,255,0.08);
-      border: 1px solid rgba(123,207,255,0.3);
-      border-radius: 3px;
-      color: var(--ice);
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 6px;
-    }
-    .submit-btn:hover { background: rgba(123,207,255,0.14); border-color: var(--ice); transform: translateY(-1px); }
-
-    /* Yorum listesi */
-    .comment-list { display: flex; flex-direction: column; gap: 20px; }
-
-    .comment-card {
-      background: rgba(11,16,32,0.6);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 22px 26px;
-      opacity: 0;
-      transform: translateY(14px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .comment-card.visible { opacity:1; transform:translateY(0); }
-
-    .comment-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .comment-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--ice), var(--gold));
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cinzel', serif;
-      font-size: 13px;
-      font-weight: 700;
-      color: #000;
-      flex-shrink: 0;
-    }
-
-    .comment-meta { flex:1; }
-    .comment-name {
-      font-family: 'Cinzel', serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-    }
-    .comment-date { font-size: 12px; color: var(--muted); font-style: italic; }
-
-    .comment-region {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      padding: 3px 8px;
-      border-radius: 2px;
-      letter-spacing: 0.15em;
-      border: 1px solid rgba(123,207,255,0.25);
-      color: var(--ice);
-      background: rgba(123,207,255,0.06);
-    }
-
-    .comment-body { font-size: 17px; color: #ccc5b5; line-height: 1.7; }
-
-    .comment-success {
-      display: none;
-      text-align: center;
-      padding: 16px;
-      color: var(--ice);
-      font-family: 'Cinzel', serif;
-      font-size: 12px;
-      letter-spacing: 0.15em;
-    }
-
     @media (max-width: 768px) {
       nav { padding:16px 20px; }
       nav ul { gap:20px; }
       .story-article { padding:40px 20px 80px; }
       blockquote { padding:24px; font-size:19px; }
-      .form-row { grid-template-columns: 1fr; }
-      .comments-section { padding: 0 20px 80px; }
     }
   </style>
 </head>
@@ -632,13 +427,13 @@
 
 <script>
 // ════════════════════════════════════════
-//  LIGHTNING ENGINE
+//  LIGHTNING ENGINE (EN YÜKSEK PERFORMANS)
 // ════════════════════════════════════════
 
 class LightningEngine {
   constructor(canvas, opts = {}) {
     this.canvas = canvas;
-    this.ctx    = canvas.getContext('2d');
+    this.ctx    = canvas.getContext('2d', { alpha: true }); // Saydamlık hesaplamalarını optimize eder
     this.opts   = Object.assign({
       color:      '#7bcfff',
       color2:     '#ffffff',
@@ -650,7 +445,7 @@ class LightningEngine {
     }, opts);
     this.bolts = [];
     this.resize();
-    window.addEventListener('resize', () => this.resize());
+    window.addEventListener('resize', () => this.resize(), { passive: true });
   }
 
   resize() {
@@ -658,7 +453,6 @@ class LightningEngine {
     this.canvas.height = this.canvas.offsetHeight;
   }
 
-  // Midpoint displacement — rekursif yıldırım oluşturucu
   _buildSegments(x1, y1, x2, y2, depth, roughness) {
     if (depth === 0) return [[x1,y1,x2,y2]];
     const mx = (x1+x2)/2 + (Math.random()-0.5) * roughness;
@@ -668,13 +462,11 @@ class LightningEngine {
     return [...left, ...right];
   }
 
-  // Tek bir bolt oluştur
   _createBolt(x1, y1, x2, y2, depth, width, alpha, isMain) {
     const roughness = Math.hypot(x2-x1,y2-y1) * this.opts.roughness;
     const segs = this._buildSegments(x1,y1,x2,y2, depth, roughness);
     const bolt = { segs, width, alpha, isMain, branches:[], life:1, decay: 0.08+Math.random()*0.06 };
 
-    // Dallanma
     if (depth > 1) {
       segs.forEach((seg, i) => {
         if (i > 0 && Math.random() < this.opts.branchProb) {
@@ -693,7 +485,6 @@ class LightningEngine {
     return bolt;
   }
 
-  // Yeni yıldırım çak
   strike(x1, y1, x2, y2, depth, width) {
     const bolt = this._createBolt(x1, y1, x2, y2,
       depth  || 4,
@@ -704,50 +495,38 @@ class LightningEngine {
     return bolt;
   }
 
-  // Çizim
   _drawBolt(bolt) {
     const ctx = this.ctx;
     const a   = bolt.life * bolt.alpha;
     if (a <= 0) return;
 
+    // 🔥 KASMA NEDENİ OLAN ctx.filter = 'blur(6px)' TAMAMEN KALDIRILDI 🔥
+    // Yerine performans dostu kalın, düşük opaklıklı vuruşlar kullanıldı
     bolt.segs.forEach(([x1,y1,x2,y2]) => {
-      // Dış glow katmanı
-      ctx.save();
       ctx.beginPath();
-      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-      ctx.strokeStyle = this.opts.glowColor + (a*0.25) + ')';
+      ctx.moveTo(x1,y1); 
+      ctx.lineTo(x2,y2);
+      ctx.lineCap = 'round';
+      
+      // En Dış Parlama (Sahte Glow)
+      ctx.strokeStyle = this.opts.glowColor + (a*0.1) + ')';
       ctx.lineWidth   = bolt.width * 8;
-      ctx.lineCap     = 'round';
-      ctx.filter      = 'blur(6px)';
       ctx.stroke();
-      ctx.restore();
 
-      // Orta glow
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-      ctx.strokeStyle = this.opts.glowColor + (a*0.55) + ')';
-      ctx.lineWidth   = bolt.width * 3.5;
-      ctx.lineCap     = 'round';
-      ctx.filter      = 'blur(2px)';
+      // Orta Parlama
+      ctx.strokeStyle = this.opts.glowColor + (a*0.35) + ')';
+      ctx.lineWidth   = bolt.width * 3;
       ctx.stroke();
-      ctx.restore();
 
-      // Ana çizgi (beyaz merkez)
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      // Yıldırımın Çekirdeği (Merkez Beyaz)
       ctx.strokeStyle = `rgba(255,255,255,${a * (bolt.isMain ? 0.95 : 0.7)})`;
       ctx.lineWidth   = bolt.isMain ? bolt.width : bolt.width * 0.6;
-      ctx.lineCap     = 'round';
       ctx.stroke();
-      ctx.restore();
     });
 
     bolt.branches.forEach(b => this._drawBolt(b));
   }
 
-  // Frame güncelle
   tick() {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -764,7 +543,7 @@ class LightningEngine {
 }
 
 // ════════════════════════════════════════
-//  INTRO
+//  INTRO YÖNETİMİ
 // ════════════════════════════════════════
 const introCanvas = document.getElementById('lightningCanvas');
 const introEngine = new LightningEngine(introCanvas, {
@@ -774,19 +553,20 @@ const introEngine = new LightningEngine(introCanvas, {
 const flashEl       = document.getElementById('flash');
 const progressEl    = document.getElementById('introProgress');
 const introDuration = 5000;
-const introStart    = Date.now();
 let   introDone     = false;
 let   introRaf      = null;
 let   introLooping  = false;
+let   introTimeout  = null;
 
-// Progress bar: CSS animation ile sürekli RAF yerine
+// CSS width yerine ScaleX kullandık.
 const progressAnim = progressEl.animate(
-  [{ width: '0%' }, { width: '100%' }],
+  [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
   { duration: introDuration, fill: 'forwards', easing: 'linear' }
 );
 progressAnim.onfinish = () => endIntro();
 
 function introLoop() {
+  if (introDone) return;
   const hasActive = introEngine.tick();
   if (hasActive) {
     introRaf = requestAnimationFrame(introLoop);
@@ -797,24 +577,21 @@ function introLoop() {
 }
 
 function startIntroLoop() {
-  if (!introLooping) {
+  if (!introLooping && !introDone) {
     introLooping = true;
     introRaf = requestAnimationFrame(introLoop);
   }
 }
 
-// Yıldırım çakma zamanlaması
 function scheduleStrike() {
   if (introDone) return;
 
   const W = introCanvas.width, H = introCanvas.height;
+  if(W === 0 || H === 0) return;
+  
   const isBig = Math.random() > 0.4;
-
-  // Başlangıç noktası: üst bölge
   const x1 = W * (0.15 + Math.random() * 0.7);
   const y1 = H * (Math.random() * 0.15);
-
-  // Bitiş noktası: orta-alt bölge
   const x2 = x1 + (Math.random()-0.5) * W * 0.35;
   const y2 = H * (0.4 + Math.random() * 0.45);
 
@@ -824,20 +601,14 @@ function scheduleStrike() {
   introEngine.strike(x1, y1, x2, y2, depth, width);
   startIntroLoop();
 
-  // Flaş efekti
   if (isBig) {
     const intensity = 0.55 + Math.random() * 0.35;
-    flashEl.style.transition = 'none';
     flashEl.style.opacity = intensity;
-    // Çift çakma (gerçek yıldırım gibi)
+    
+    setTimeout(() => { flashEl.style.opacity = 0.05; }, 70);
     setTimeout(() => {
-      flashEl.style.transition = 'opacity 0.06s';
-      flashEl.style.opacity = 0.05;
-    }, 70);
-    setTimeout(() => {
-      flashEl.style.transition = 'none';
+      if(introDone) return;
       flashEl.style.opacity = intensity * 0.65;
-      // İkinci çakma sırasında dal yıldırım ekle
       introEngine.strike(
         x1 + (Math.random()-0.5)*80, y1,
         x2 + (Math.random()-0.5)*120, y2 * 0.85,
@@ -845,49 +616,42 @@ function scheduleStrike() {
       );
       startIntroLoop();
     }, 130);
-    setTimeout(() => {
-      flashEl.style.transition = 'opacity 0.45s';
-      flashEl.style.opacity = 0;
-    }, 220);
+    setTimeout(() => { flashEl.style.opacity = 0; }, 220);
   } else {
-    flashEl.style.transition = 'none';
     flashEl.style.opacity = 0.08 + Math.random()*0.1;
-    setTimeout(() => {
-      flashEl.style.transition = 'opacity 0.3s';
-      flashEl.style.opacity = 0;
-    }, 80);
+    setTimeout(() => { flashEl.style.opacity = 0; }, 80);
   }
 
-  // Sonraki çakma
-  setTimeout(scheduleStrike, 700 + Math.random() * 1100);
+  introTimeout = setTimeout(scheduleStrike, 700 + Math.random() * 1100);
 }
 setTimeout(scheduleStrike, 400);
 
 function endIntro() {
   if (introDone) return;
   introDone = true;
+  
+  clearTimeout(introTimeout); 
   progressAnim.cancel();
   if (introRaf) { cancelAnimationFrame(introRaf); introRaf = null; }
 
-  // Final büyük flaş
-  flashEl.style.transition = 'none';
   flashEl.style.opacity = 0.85;
-  setTimeout(() => {
-    flashEl.style.transition = 'opacity 0.6s';
-    flashEl.style.opacity = 0;
-  }, 100);
+  setTimeout(() => { flashEl.style.opacity = 0; }, 100);
 
   setTimeout(() => {
     document.getElementById('intro').classList.add('exiting');
     document.getElementById('main-content').classList.add('visible');
-    setTimeout(() => { document.getElementById('intro').style.display='none'; }, 1000);
+    setTimeout(() => { 
+      document.getElementById('intro').style.display='none'; 
+      introCanvas.width = 0;
+      introCanvas.height = 0;
+    }, 1000);
   }, 280);
 }
 
 function skipIntro() { endIntro(); }
 
 // ════════════════════════════════════════
-//  HERO CANVAS YILDIRIMLARİ
+//  HERO CANVAS LIGHTNING
 // ════════════════════════════════════════
 const heroCanvas = document.getElementById('heroCanvas');
 const heroEngine = new LightningEngine(heroCanvas, {
@@ -916,8 +680,13 @@ function startHeroLoop() {
 }
 
 function scheduleHeroStrike() {
+  if (!document.getElementById('main-content').classList.contains('visible')) {
+    setTimeout(scheduleHeroStrike, 1000);
+    return;
+  }
+
   const W = heroCanvas.offsetWidth, H = heroCanvas.offsetHeight;
-  if (Math.random() > 0.35) {
+  if (W > 0 && Math.random() > 0.35) {
     const x1 = W * (0.1 + Math.random() * 0.8);
     heroEngine.strike(x1, 0, x1+(Math.random()-0.5)*W*0.25, H*(0.4+Math.random()*0.4), 3, 1+Math.random()*1.2);
     startHeroLoop();
@@ -927,13 +696,17 @@ function scheduleHeroStrike() {
 setTimeout(scheduleHeroStrike, 3000);
 
 // ════════════════════════════════════════
-//  SCROLL REVEAL
+//  SCROLL REVEAL YÖNETİMİ
 // ════════════════════════════════════════
 const revObs = new IntersectionObserver(entries => {
-  entries.forEach((e,i) => {
-    if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i*90);
+  entries.forEach((e) => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revObs.unobserve(e.target); 
+    }
   });
-}, { threshold: 0.12 });
+}, { threshold: 0.05 }); 
+
 document.querySelectorAll('.story-article p, blockquote').forEach(el => revObs.observe(el));
 </script>
 </body>

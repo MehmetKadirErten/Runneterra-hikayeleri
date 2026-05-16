@@ -192,10 +192,6 @@
   <div style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0; pointer-events: none; z-index: -99;">
     <div id="youtube-player"></div>
   </div>
-  
-  <audio id="hover-sound">
-    <source src="lol-hover.mp3" type="audio/mpeg">
-  </audio>
 
   <button id="music-toggle" class="music-btn interactive-el" aria-label="Müziği Aç/Kapat">
     <span class="music-icon">🔇</span> <span class="music-text">Sesi Aç</span>
@@ -431,33 +427,12 @@
         const readMoreLink = card.querySelector('.card-link');
         readMoreLink.addEventListener('click', (e) => triggerCinematicTransition(e, pageLink, champ.id));
 
-        // HER KART İÇİN ÖZEL HOVER SESİ (02.30 - 09.00)
-        card.addEventListener('mouseenter', () => {
-          const hoverSound = document.getElementById('hover-sound');
-          if (hoverSound) {
-            hoverSound.pause();
-            hoverSound.currentTime = 2.3; // Başlangıç: 2.30 saniye
-            hoverSound.play().catch(() => {});
-          }
-        });
-
         grid.appendChild(card);
       });
       document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
     renderChampions();
-
-    // SES DURDURMA MANTIĞI (9. SANİYEDE DURDUR)
-    const hoverSound = document.getElementById('hover-sound');
-    if (hoverSound) {
-        hoverSound.volume = 0.4;
-        hoverSound.addEventListener('timeupdate', function() {
-            if (this.currentTime >= 9.0) { // Bitiş: 09.00 saniye
-                this.pause();
-            }
-        });
-    }
 
     /* -------------------------------------------------------------------------
        2. FİLTRELEME VE SIRALAMA ALGORİTMASI 

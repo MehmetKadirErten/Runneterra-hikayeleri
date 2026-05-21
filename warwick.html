@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warwick: Zaun'un Öfkesi — Runeterra Günlükleri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #070406;
+      --card: #0e060a;
+      --border: #1e0c14;
+      --red: #b02020;
+      --red2: #e03030;
+      --red3: #ff6644;
+      --orange: #c04010;
+      --gold: #c8972a;
+      --gold2: #e8c060;
+      --text: #d4bab8;
+      --muted: #6a4850;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 19px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── INTRO ── */
+    #intro {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    .intro-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 100% 60% at 50% 75%, #1a0306 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 10% 70%, #110204 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 90% 70%, #110204 0%, transparent 50%),
+        #000;
+      animation: bgBreath 4s ease-in-out infinite alternate;
+    }
+    @keyframes bgBreath {
+      from { opacity: 0.8; }
+      to   { opacity: 1; }
+    }
+
+    /* Kan damlası canvas */
+    #introCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    /* Kırmızı flaş */
+    #introFlash {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% 50%, #cc1100, #000);
+      opacity: 0; pointer-events: none;
+    }
+
+    /* Dönen dişli halkalar */
+    .gear-ring {
+      position: absolute; border-radius: 50%;
+      border: 1px dashed rgba(176,32,32,0.12);
+      pointer-events: none;
+      top: 50%; left: 50%;
+      will-change: transform; /* Performans artışı */
+    }
+    .gear-ring:nth-child(1){ width:540px;height:540px;transform:translate(-50%,-50%);animation:gearSpin 16s linear infinite; }
+    .gear-ring:nth-child(2){ width:390px;height:390px;transform:translate(-50%,-50%);border-style:solid;border-color:rgba(176,32,32,0.07);animation:gearSpin 10s linear infinite reverse; }
+    .gear-ring:nth-child(3){ width:250px;height:250px;transform:translate(-50%,-50%);animation:gearSpin 6s linear infinite;border-color:rgba(192,64,16,0.08); }
+    @keyframes gearSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    /* İçerik */
+    .intro-content {
+      position: relative; z-index: 2; text-align: center;
+      animation: contentRise 0.7s ease-out 0.5s both;
+    }
+    @keyframes contentRise {
+      from { opacity:0; transform:translateY(24px) scale(0.96); }
+      to   { opacity:1; transform:translateY(0)    scale(1); }
+    }
+
+    .intro-icon {
+      font-size: 72px; display: block; margin-bottom: 18px;
+      animation: iconHowl 3s ease-in-out infinite;
+    }
+    @keyframes iconHowl {
+      0%   { transform: scale(1)    rotate(-4deg); filter: drop-shadow(0 0 16px var(--red));  }
+      25%  { transform: scale(1.1)  rotate(0deg);  filter: drop-shadow(0 0 40px var(--red2)) drop-shadow(0 0 80px rgba(176,32,32,0.3)); }
+      50%  { transform: scale(1.05) rotate(3deg);  filter: drop-shadow(0 0 24px var(--red));  }
+      75%  { transform: scale(1.08) rotate(-1deg); filter: drop-shadow(0 0 50px var(--red2)); }
+      100% { transform: scale(1)    rotate(-4deg); filter: drop-shadow(0 0 16px var(--red));  }
+    }
+
+    .intro-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(52px, 9vw, 108px);
+      font-weight: 900; color: #fff; letter-spacing: 0.12em; line-height: 1;
+      margin-bottom: 12px;
+      text-shadow: 0 0 40px rgba(176,32,32,0.7), 0 2px 0 rgba(0,0,0,0.9);
+      animation: titleBlood 5s ease-in-out infinite;
+    }
+    @keyframes titleBlood {
+      0%,88%,100% { opacity:1; }
+      90% { opacity:0.82; text-shadow: 0 0 60px rgba(224,48,48,0.9), 0 2px 0 rgba(0,0,0,0.9); }
+      93% { opacity:1; }
+      96% { opacity:0.88; }
+    }
+
+    .intro-sub {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(10px, 1.6vw, 14px);
+      color: var(--red2); letter-spacing: 0.42em; text-transform: uppercase;
+      opacity: 0.75; margin-bottom: 52px;
+    }
+
+    .intro-skip {
+      display: inline-block; font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--muted); letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 10px 28px; border: 1px solid rgba(176,32,32,0.22); cursor: pointer;
+      transition: all 0.3s; animation: contentRise 0.5s ease-out 1.3s both;
+    }
+    .intro-skip:hover { color: var(--red2); border-color: rgba(176,32,32,0.55); }
+
+    #introProgress {
+      position: absolute; bottom: 0; left: 0; height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--red), var(--red3), var(--gold));
+      box-shadow: 0 0 14px var(--red);
+    }
+
+    #intro.exiting { animation: introOut 0.9s ease-in forwards; }
+    @keyframes introOut {
+      0%   { opacity:1; transform:scale(1); }
+      40%  { opacity:1; transform:scale(1.04); }
+      100% { opacity:0; transform:scale(1.08); pointer-events:none; }
+    }
+
+    /* ── MAIN ── */
+    #main-content { opacity:0; transition:opacity 1s ease 0.4s; }
+    #main-content.visible { opacity:1; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:20px 56px;
+      background:rgba(7,4,6,0.9); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(176,32,32,0.14);
+    }
+    .logo { font-family:'Cinzel',serif; font-size:14px; font-weight:900; color:var(--gold); letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; }
+    .logo span { color:var(--text); font-weight:400; }
+    nav ul { display:flex; gap:36px; list-style:none; }
+    nav a { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); text-decoration:none; letter-spacing:0.15em; text-transform:uppercase; transition:color 0.25s; }
+    nav a:hover { color:var(--red2); }
+
+    /* HERO */
+    .story-hero {
+      position:relative; height:100vh;
+      display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
+      text-align:center; padding-bottom:80px; overflow:hidden;
+    }
+    .hero-bg {
+      position:absolute; inset:0; overflow:hidden;
+    }
+    .hero-bg img {
+      width:100%; height:100%; object-fit:cover; object-position:center 20%;
+      transform:scale(1.06);
+      animation:heroDrift 20s ease-in-out infinite alternate;
+    }
+    @keyframes heroDrift {
+      from { transform:scale(1.06) translateY(0); }
+      to   { transform:scale(1.12) translateY(-2%); }
+    }
+    .hero-overlay {
+      position:absolute; inset:0;
+      background:
+        linear-gradient(to bottom, rgba(7,4,6,0.25) 0%, rgba(7,4,6,0.65) 55%, var(--bg) 100%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(176,32,32,0.08) 0%, transparent 70%);
+    }
+    #heroCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+
+    .hero-content { position:relative; z-index:2; max-width:800px; padding:0 20px; }
+
+    .region-tag {
+      font-family:'Cinzel',serif; font-size:12px; color:var(--red2); letter-spacing:0.32em; text-transform:uppercase;
+      display:inline-block; padding:6px 18px; border:1px solid rgba(176,32,32,0.3); border-radius:2px;
+      background:rgba(176,32,32,0.07); margin-bottom:22px;
+      animation:tagIn 0.6s ease-out 0.2s both;
+    }
+    @keyframes tagIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .story-title {
+      font-family:'Cinzel',serif; font-size:clamp(38px,5.5vw,80px); font-weight:900; line-height:1.05;
+      color:#fff; text-shadow:0 0 50px rgba(176,32,32,0.5), 0 4px 24px rgba(0,0,0,0.8);
+      margin-bottom:14px; animation:tagIn 0.7s ease-out 0.4s both;
+    }
+    .story-subtitle {
+      font-size:18px; color:var(--red2); font-style:italic; font-family:'Cinzel',serif;
+      letter-spacing:0.1em; opacity:0.85; animation:tagIn 0.7s ease-out 0.6s both;
+    }
+
+    .scroll-hint {
+      position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:8px; z-index:2;
+      animation:hintFloat 2.2s ease-in-out infinite;
+    }
+    @keyframes hintFloat {
+      0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)}
+    }
+    .scroll-line { width:1px; height:44px; background:linear-gradient(var(--red2),transparent); box-shadow:0 0 6px var(--red); }
+    .scroll-text { font-family:'Cinzel',serif; font-size:9px; color:var(--muted); letter-spacing:0.28em; text-transform:uppercase; }
+
+    /* ARTICLE */
+    .story-article { position:relative; max-width:760px; margin:0 auto; padding:60px 24px 110px; }
+    .article-rune { text-align:center; font-size:24px; color:var(--red2); margin-bottom:44px; opacity:0.45; letter-spacing:0.3em; }
+
+    .story-article p:first-of-type::first-letter {
+      float:left; font-family:'Cinzel',serif; font-size:88px; line-height:62px;
+      padding-top:4px; padding-right:13px; padding-left:3px;
+      color:var(--red2); text-shadow:0 0 24px rgba(176,32,32,0.5);
+    }
+    .story-article p {
+      margin-bottom:30px; font-size:20px; line-height:1.88; color:#d4b8b5; text-align:justify;
+      opacity:0; transform:translateY(18px); transition:opacity 0.7s ease,transform 0.7s ease;
+    }
+    .story-article p.visible { opacity:1; transform:translateY(0); }
+
+    blockquote {
+      margin:52px 0; padding:34px 42px; border-left:2px solid var(--red);
+      background:linear-gradient(90deg,rgba(176,32,32,0.06),transparent 80%);
+      font-size:23px; font-style:italic; color:#fff; font-family:'Cinzel',serif; line-height:1.6;
+      position:relative; opacity:0; transform:translateX(-18px); transition:opacity 0.8s ease,transform 0.8s ease;
+    }
+    blockquote.visible { opacity:1; transform:translateX(0); }
+    blockquote::before { content:'❝'; position:absolute; top:-18px; left:18px; font-size:44px; color:rgba(176,32,32,0.2); font-style:normal; line-height:1; }
+
+    .chapter-break {
+      display:flex; align-items:center; gap:18px; margin:52px 0; color:var(--muted); font-size:13px; letter-spacing:0.28em;
+    }
+    .chapter-break::before,.chapter-break::after {
+      content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(176,32,32,0.2),transparent);
+    }
+
+    .back-nav { text-align:center; margin-top:72px; border-top:1px solid rgba(255,255,255,0.04); padding-top:56px; margin-bottom: 40px; }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:12px; padding:15px 40px;
+      border:1px solid rgba(200,151,42,0.4); color:var(--gold); font-family:'Cinzel',serif;
+      font-size:12px; letter-spacing:0.2em; text-transform:uppercase; text-decoration:none; transition:all 0.35s; position:relative; overflow:hidden;
+    }
+    .back-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(200,151,42,0.09),transparent); transform:translateX(-100%); transition:transform 0.4s ease; }
+    .back-btn:hover { border-color:var(--gold); color:var(--gold2); letter-spacing:0.27em; }
+    .back-btn:hover::before { transform:translateX(0); }
+
+    /* ── YORUMLAR ── */
+    .comments-section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+    .comments-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .comments-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(176, 32, 32, 0.25), transparent);
+    }
+    .comments-sub {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 36px;
+    }
+
+    .comment-form {
+      background: rgba(14, 6, 10, 0.7);
+      border: 1px solid rgba(176, 32, 32, 0.12);
+      border-radius: 4px;
+      padding: 28px;
+      margin-bottom: 40px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--red2);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .form-group input,
+    .form-group textarea {
+      background: rgba(14, 6, 10, 0.8);
+      border: 1px solid rgba(176, 32, 32, 0.15);
+      border-radius: 3px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 17px;
+      outline: none;
+      transition: border-color 0.25s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: rgba(176, 32, 32, 0.45);
+    }
+    .form-group textarea {
+      min-height: 100px;
+    }
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      background: rgba(176, 32, 32, 0.07);
+      border: 1px solid rgba(176, 32, 32, 0.3);
+      border-radius: 3px;
+      color: var(--red2);
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 6px;
+    }
+    .submit-btn:hover {
+      background: rgba(176, 32, 32, 0.14);
+      border-color: var(--red2);
+      transform: translateY(-1px);
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .comment-card {
+      background: rgba(14, 6, 10, 0.5);
+      border: 1px solid rgba(176, 32, 32, 0.1);
+      border-radius: 4px;
+      padding: 22px 26px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .comment-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .comment-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red2), var(--border));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .comment-meta {
+      flex: 1;
+    }
+    .comment-name {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .comment-date {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .comment-region {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.15em;
+      border: 1px solid rgba(176, 32, 32, 0.25);
+      color: var(--red2);
+      background: rgba(176, 32, 32, 0.06);
+    }
+    .comment-body {
+      font-size: 17px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .comment-success {
+      display: none;
+      text-align: center;
+      padding: 16px;
+      color: var(--red2);
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+    }
+
+    footer { border-top:1px solid rgba(200,151,42,0.1); padding:46px 20px; text-align:center; }
+    .footer-logo { font-family:'Cinzel',serif; font-size:18px; font-weight:900; color:var(--gold); letter-spacing:0.1em; margin-bottom:10px; }
+    .footer-copy { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); letter-spacing:0.1em; }
+
+    /* KAN / PARTİKÜL YAĞMURU */
+    #snow-container { position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+    .snowflake { 
+      position:absolute; top:-10px; border-radius:50%; opacity:0; animation:dropFall linear infinite; 
+      will-change: transform, opacity; /* Performans Artışı */
+    }
+    @keyframes dropFall {
+      0%   { transform:translateY(-10px) translateX(0); opacity:0; }
+      5%   { opacity:0.8; }
+      90%  { opacity:0.25; }
+      100% { transform:translateY(105vh) translateX(var(--drift)); opacity:0; }
+    }
+
+    @media(max-width:768px){
+      nav{padding:16px 20px;} nav ul{gap:20px;}
+      .story-article{padding:40px 20px 80px;} blockquote{padding:24px;font-size:19px;}
+      .comments-section { padding: 0 20px; margin: 40px auto 100px; }
+      .comments-title { font-size: 18px; }
+      .comments-sub { font-size: 12px; margin-bottom: 28px; }
+      .comment-form { padding: 20px; margin-bottom: 30px; }
+      .form-row { grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
+      .form-group input, .form-group textarea { font-size: 16px; padding: 12px 14px; }
+      .form-group textarea { min-height: 80px; }
+      .submit-btn { padding: 10px 25px; font-size: 10px; }
+      .comment-list { gap: 12px; }
+      .comment-card { padding: 18px 20px; }
+      .comment-avatar { width: 30px; height: 30px; font-size: 11px; }
+      .comment-name { font-size: 12px; }
+      .comment-date { font-size: 11px; }
+      .comment-region { font-size: 8px; padding: 2px 6px; }
+      .comment-body { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="snow-container"></div>
+
+<div id="intro">
+  <div class="intro-bg"></div>
+  <canvas id="introCanvas"></canvas>
+  <div id="introFlash"></div>
+  <div class="gear-ring"></div>
+  <div class="gear-ring"></div>
+  <div class="gear-ring"></div>
+  <div class="intro-content">
+    <span class="intro-icon">🐺</span>
+    <div class="intro-title">WARWICK</div>
+    <div class="intro-sub">Zaun'un Dizginlenemeyen Öfkesi</div>
+    <div class="intro-skip" onclick="skipIntro()">Geç →</div>
+  </div>
+  <div id="introProgress"></div>
+</div>
+
+<div id="main-content">
+  <nav>
+    <a href="index.html" class="logo">Runeterra <span>Günlükleri</span></a>
+    <ul><li><a href="index.html">Tüm Efsaneler</a></li></ul>
+  </nav>
+
+  <header class="story-hero">
+    <div class="hero-bg">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNiOcJzaGxJ8a7YrG_y-k7Rby0ZejDkGd14pLd0PH8bjeUamC0FgOeLt11ifwR-HZEtfgQTdh91CaJa1QZuKHW0CgxR2fs5mITWFpHeXZilfskBZYqNqR1Su4Mwk1jifV8su8DVW-bMkmB/s0/warwick-lol-splash-art-uhdpaper.com-4K-337-wp.thumbnail.jpg"
+           alt="Warwick splash art">
+    </div>
+    <div class="hero-overlay"></div>
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <div class="region-tag">Zaun</div>
+      <h1 class="story-title">Warwick</h1>
+      <div class="story-subtitle">Zaun'un Dizginlenemeyen Öfkesi</div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <div class="scroll-text">Aşağı Kaydır</div>
+    </div>
+  </header>
+
+  <main class="story-article">
+    <div class="article-rune">🩸 ✦ 🩸</div>
+
+    <p>Zaun'un karanlık borularının altında, kimse onun ne olduğunu hatırlamıyordu artık. Belki de bu en iyisiydi — çünkü Warwick da hatırlamıyordu. Sinir uçlarına lehimlenmiş metal, kaslarına işlenmiş kimyasal öfke ve derinlerde bir yerde bastırılmış, yarım kalmış bir isim. Sadece bir isim. Onu insan yapan tek şey oydu, ve o da gidiyordu.</p>
+
+    <p>Singed'in laboratuvarında doğan bu canavar, bir zamanlar seçim yapmış biriydi. Fakat hangi seçim? Kan kokusu her şeyi bulanıklaştırıyordu. Piltover'ın temiz havasında bir av kokusu aldığında, bacakları kendiliğinden hareket ederdi — beyin değil, içgüdü komuta ederdi artık.</p>
+
+    <blockquote>"Seni hatırlıyorum. Seni hatırlamayı dilerdim."</blockquote>
+
+    <div class="chapter-break">🩸 🩸 🩸</div>
+
+    <p>Zaun'un dehlizlerinde avlanan şey bir kurt değildi yalnızca. Haksızlıkla yoğrulmuş bir öfkeydi — kimin haksızlığı olduğu bile unutulmuş. Güçsüzleri yiyen güçlüleri takip ederdi. Bu bir vicdan değildi; bu bir hayaletin sesiydi, metal ve etten bir bedende yankılanan, tanımsız bir adalet çığlığı.</p>
+
+    <p>Bugün hâlâ koşuyor. Durduramıyor. Belki bir gün, o koşunun sonunda, başlangıcı bulacak. Belki de bulduğunda isteyeceği tek şey yeniden unutmak olacak.</p>
+
+    <div class="back-nav">
+      <a href="index.html" class="back-btn">← Efsanelere Dön</a>
+    </div>
+  </main>
+
+  <section class="comments-section">
+    <div class="comments-title">Yorumlar</div>
+    <p class="comments-sub">Bu hikaye hakkında ne düşünüyorsun?</p>
+
+    <div class="comment-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>İsim</label>
+          <input type="text" id="commentName" placeholder="Adın...">
+        </div>
+        <div class="form-group">
+          <label>Bölge</label>
+          <input type="text" id="commentRegion" placeholder="Zaun, Piltover...">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Yorum</label>
+        <textarea id="commentText" placeholder="Hikaye hakkında düşüncelerini yaz..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitComment()">Yorum Gönder 🐺</button>
+      <div class="comment-success" id="commentSuccess">✦ Av başladı, yorum eklendi! ✦</div>
+    </div>
+
+    <div class="comment-list" id="commentList">
+      </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Runeterra Günlükleri</div>
+    <div class="footer-copy">© 2026 Mehmet Kadir Erten · Tüm hakları saklıdır</div>
+  </footer>
+</div>
+
+<script>
+// ── KAN DAMLASI PARTİKÜLLER ──
+(function(){
+  const c = document.getElementById('snow-container');
+  for(let i = 0; i < 28; i++){
+    const p = document.createElement('div');
+    p.className = 'snowflake';
+    const w = 2 + Math.random() * 4;
+    const h = w * (1.5 + Math.random());
+    p.style.cssText = `
+      width:${w}px; height:${h}px;
+      border-radius:${w/2}px ${w/2}px ${w*0.8}px ${w*0.8}px;
+      left:${Math.random()*100}%;
+      background:rgba(176,32,32,${0.4+Math.random()*0.5});
+      box-shadow:0 0 ${w*2}px rgba(176,32,32,0.6);
+      animation-duration:${5+Math.random()*9}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    p.style.setProperty('--drift', (Math.random()-0.5)*60+'px');
+    c.appendChild(p);
+  }
+})();
+
+// ════════════════════════════════════════
+// WARWICK ANİMASYON MOTORu
+// Performans Odaklı Güncelleme:
+// - ctx.filter (blur) kaldırıldı, stroke katmanlarıyla parlama sağlandı.
+// - Ağır Gradient'ler yerine basit, katmanlı daire çizimleri kullanıldı.
+// ════════════════════════════════════════
+class WarwickEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx    = canvas.getContext('2d');
+    this.waves  = [];   // uluma dalgaları
+    this.sparks = [];   // kan kıvılcımları
+    this.time   = 0;
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+  }
+
+  resize() {
+    this.canvas.width  = this.canvas.offsetWidth  || window.innerWidth;
+    this.canvas.height = this.canvas.offsetHeight || window.innerHeight;
+  }
+
+  // Howl dalgası: merkezden dışa yayılan elips halka
+  howl(cx, cy) {
+    cx = cx ?? this.canvas.width  * 0.5;
+    cy = cy ?? this.canvas.height * 0.5;
+    // 2-3 iç içe dalga — uluma yankısı gibi
+    const count = 2 + Math.floor(Math.random() * 2);
+    for(let i = 0; i < count; i++){
+      this.waves.push({
+        cx, cy,
+        rx: 0, ry: 0,
+        maxRx: this.canvas.width  * (0.7 + Math.random() * 0.4),
+        maxRy: this.canvas.height * (0.5 + Math.random() * 0.3),
+        speedX: 5  + Math.random() * 5 + i * 2,
+        speedY: 3  + Math.random() * 3 + i * 1.2,
+        life: 1,
+        decay: 0.012 + i * 0.004 + Math.random() * 0.008,
+        width: 1.5 - i * 0.3,
+        alpha: 0.7 - i * 0.15,
+        delay: i * 80, // ms gecikme — art arda çıksın
+        born: Date.now(),
+      });
+    }
+  }
+
+  // Kan kıvılcımı: merkezden fırlayan küçük parçacık
+  spark(cx, cy) {
+    cx = cx ?? this.canvas.width  * 0.5;
+    cy = cy ?? this.canvas.height * 0.52;
+    const count = 8 + Math.floor(Math.random() * 10);
+    for(let i = 0; i < count; i++){
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 6;
+      this.sparks.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1,
+        gravity: 0.08 + Math.random() * 0.06,
+        size: 1.5 + Math.random() * 3,
+        life: 1,
+        decay: 0.018 + Math.random() * 0.016,
+        alpha: 0.8 + Math.random() * 0.2,
+      });
+    }
+  }
+
+  tick() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.time += 0.016;
+    const now = Date.now();
+
+    // ── Dalgalar ──
+    this.waves = this.waves.filter(w => w.life > 0);
+    this.waves.forEach(w => {
+      if(now - w.born < w.delay) return; // gecikme bekleniyor
+      const a = w.life * w.alpha;
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(w.cx, w.cy, w.rx, w.ry, 0, 0, Math.PI * 2);
+
+      // Performans Dostu Dış Glow (Blur yerine kalın yarı saydam stroke)
+      ctx.strokeStyle = `rgba(176,32,32,${a * 0.15})`;
+      ctx.lineWidth   = w.width * 6;
+      ctx.stroke();
+
+      // Orta Halka
+      ctx.strokeStyle = `rgba(224,64,48,${a * 0.35})`;
+      ctx.lineWidth   = w.width * 3;
+      ctx.stroke();
+
+      // İnce keskin iç çizgi
+      ctx.strokeStyle = `rgba(255,160,120,${a * 0.8})`;
+      ctx.lineWidth   = w.width * 0.8;
+      ctx.stroke();
+
+      ctx.restore();
+
+      w.rx   += w.speedX;
+      w.ry   += w.speedY;
+      w.life -= w.decay;
+    });
+
+    // ── Kıvılcımlar ──
+    this.sparks = this.sparks.filter(s => s.life > 0);
+    this.sparks.forEach(s => {
+      s.vy += s.gravity;
+      s.x  += s.vx;
+      s.y  += s.vy;
+      s.life -= s.decay;
+      const a = s.life * s.alpha;
+
+      // Performans Dostu Glow (Yorucu Radial Gradient yerine iki içiçe daire)
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 2, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(176,32,32,${a * 0.3})`;
+      ctx.fill();
+
+      // İç nokta
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 0.8, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,200,180,${a})`;
+      ctx.fill();
+    });
+
+    return this.waves.length > 0 || this.sparks.length > 0;
+  }
+}
+
+// ── INTRO ──
+const introCanvas = document.getElementById('introCanvas');
+const introEngine = new WarwickEngine(introCanvas);
+const flashEl     = document.getElementById('introFlash');
+const progressEl  = document.getElementById('introProgress');
+const introDur    = 5500;
+let   introDone   = false;
+let   introRaf    = null;
+let   introLooping = false;
+
+const progressAnim = progressEl.animate(
+  [{ width:'0%' },{ width:'100%' }],
+  { duration: introDur, fill:'forwards', easing:'linear' }
+);
+progressAnim.onfinish = () => endIntro();
+
+function introLoop() {
+  introEngine.tick();
+  introRaf = requestAnimationFrame(introLoop);
+}
+
+function startIntroLoop() {
+  if(!introLooping){ introLooping = true; introRaf = requestAnimationFrame(introLoop); }
+}
+
+// Uluma dalgaları — belirli aralıklarla
+function triggerHowl() {
+  if(introDone) return;
+  introEngine.howl();
+  introEngine.spark();
+
+  // Kırmızı flaş
+  flashEl.style.transition = 'none';
+  flashEl.style.opacity    = 0.12 + Math.random() * 0.1;
+  setTimeout(() => {
+    flashEl.style.transition = 'opacity 0.5s';
+    flashEl.style.opacity    = 0;
+  }, 80);
+
+  startIntroLoop();
+  setTimeout(triggerHowl, 1400 + Math.random() * 900);
+}
+setTimeout(triggerHowl, 400);
+
+// Sürekli küçük kıvılcım (arka planda)
+function spawnBgSparks() {
+  if(introDone) return;
+  const cx = introCanvas.width  * 0.5;
+  const cy = introCanvas.height * 0.52;
+  introEngine.spark(
+    cx + (Math.random()-0.5)*60,
+    cy + (Math.random()-0.5)*40
+  );
+  startIntroLoop();
+  setTimeout(spawnBgSparks, 200 + Math.random() * 200);
+}
+setTimeout(spawnBgSparks, 600);
+
+function endIntro() {
+  if(introDone) return;
+  introDone = true;
+  progressAnim.cancel();
+
+  // Son büyük howl + flaş
+  introEngine.howl();
+  introEngine.spark();
+  flashEl.style.transition = 'none';
+  flashEl.style.opacity    = 0.35;
+  setTimeout(() => { flashEl.style.transition = 'opacity 0.7s'; flashEl.style.opacity = 0; }, 100);
+
+  setTimeout(() => {
+    if(introRaf){ cancelAnimationFrame(introRaf); introRaf = null; }
+    const intro = document.getElementById('intro');
+    intro.classList.add('exiting');
+    document.getElementById('main-content').classList.add('visible');
+    setTimeout(() => { intro.style.display = 'none'; }, 1000);
+  }, 300);
+}
+function skipIntro() { endIntro(); }
+
+// ── HERO CANVAS ──
+const heroCanvas = document.getElementById('heroCanvas');
+const heroEngine = new WarwickEngine(heroCanvas);
+let heroRaf = null, heroLooping = false;
+
+// Kaydırıldığında işlemciyi yormamak için Görünürlük Kontrolü
+let isHeroVisible = true;
+const heroObserver = new IntersectionObserver(entries => {
+  isHeroVisible = entries[0].isIntersecting;
+}, { threshold: 0 });
+heroObserver.observe(document.querySelector('.story-hero'));
+
+function heroLoop() {
+  const has = heroEngine.tick();
+  if(has && isHeroVisible){ 
+    heroRaf = requestAnimationFrame(heroLoop); 
+  } else { 
+    heroLooping = false; 
+    heroRaf = null; 
+  }
+}
+
+function startHero() {
+  if(!heroLooping && isHeroVisible){ 
+    heroLooping = true; 
+    heroRaf = requestAnimationFrame(heroLoop); 
+  }
+}
+
+function spawnHero() {
+  if(isHeroVisible && Math.random() > 0.4){
+    heroEngine.howl(
+      heroCanvas.offsetWidth  * 0.5,
+      heroCanvas.offsetHeight * 0.55
+    );
+    heroEngine.spark(
+      heroCanvas.offsetWidth  * 0.5,
+      heroCanvas.offsetHeight * 0.55
+    );
+    startHero();
+  }
+  setTimeout(spawnHero, 2200 + Math.random() * 3000);
+}
+setTimeout(spawnHero, 3000);
+
+// ── SCROLL REVEAL ──
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if(e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 90);
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.story-article p, blockquote').forEach(el => revObs.observe(el));
+
+// ── YORUM SİSTEMİ ──
+function submitComment() {
+  const name    = document.getElementById('commentName').value.trim();
+  const region  = document.getElementById('commentRegion').value.trim();
+  const text    = document.getElementById('commentText').value.trim();
+  if(!name || !text) return;
+
+  const list = document.getElementById('commentList');
+  const card = document.createElement('div');
+  card.className = 'comment-card';
+  card.innerHTML = `
+    <div class="comment-header">
+      <div class="comment-avatar">${name[0].toUpperCase()}</div>
+      <div class="comment-meta">
+        <div class="comment-name">${name}</div>
+        <div class="comment-date">Az önce</div>
+      </div>
+      ${region ? `<div class="comment-region">${region}</div>` : ''}
+    </div>
+    <div class="comment-body">${text}</div>
+  `;
+  list.prepend(card);
+  setTimeout(() => card.classList.add('visible'), 50);
+
+  document.getElementById('commentName').value  = '';
+  document.getElementById('commentRegion').value = '';
+  document.getElementById('commentText').value   = '';
+  const success = document.getElementById('commentSuccess');
+  success.style.display = 'block';
+  setTimeout(() => { success.style.display = 'none'; }, 3000);
+}
+
+// Yorum kartları scroll reveal
+const commentObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.comment-card').forEach(el => commentObs.observe(el));
+</script>
+</body>
+</html>

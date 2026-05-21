@@ -248,7 +248,7 @@
     }
 
     .scroll-hint {
-      position: absolute; bottom: 30px; left: 50%;
+      position: absolute; bottom: 10px; left: 50%;
       transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
       z-index: 2; animation: hintFloat 2.2s ease-in-out infinite;
@@ -331,6 +331,239 @@
     .footer-logo { font-family:'Cinzel',serif; font-size:18px; font-weight:900; color:var(--red); letter-spacing:0.1em; margin-bottom:10px; }
     .footer-copy { font-family:'Cinzel',serif; font-size:11px; color:var(--muted); letter-spacing:0.1em; }
 
+    /* ── YORUMLAR ── */
+    .comments-section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+    .comments-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .comments-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(168,0,0,0.25), transparent);
+    }
+    .comments-sub {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 36px;
+    }
+
+    .comment-form {
+      background: rgba(8,5,5,0.7);
+      border: 1px solid rgba(168,0,0,0.12);
+      border-radius: 4px;
+      padding: 28px;
+      margin-bottom: 40px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--red);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .form-group input,
+    .form-group textarea {
+      background: rgba(8,5,5,0.8);
+      border: 1px solid rgba(168,0,0,0.15);
+      border-radius: 3px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Crimson Pro', serif;
+      font-size: 17px;
+      outline: none;
+      transition: border-color 0.25s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: rgba(168,0,0,0.45);
+    }
+    .form-group textarea {
+      min-height: 100px;
+    }
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      background: rgba(168,0,0,0.07);
+      border: 1px solid rgba(168,0,0,0.3);
+      border-radius: 3px;
+      color: var(--red);
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 6px;
+    }
+    .submit-btn:hover {
+      background: rgba(168,0,0,0.14);
+      border-color: var(--red2);
+      transform: translateY(-1px);
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .comment-card {
+      background: rgba(8,5,5,0.5);
+      border: 1px solid rgba(168,0,0,0.1);
+      border-radius: 4px;
+      padding: 22px 26px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .comment-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .comment-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red), var(--border));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .comment-meta {
+      flex: 1;
+    }
+    .comment-name {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .comment-date {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .comment-region {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.15em;
+      border: 1px solid rgba(168,0,0,0.25);
+      color: var(--red);
+      background: rgba(168,0,0,0.06);
+    }
+    .comment-body {
+      font-size: 17px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .comment-success {
+      display: none;
+      text-align: center;
+      padding: 16px;
+      color: var(--red);
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+    }
+    @media (max-width: 768px) {
+      .comments-section {
+        padding: 0 20px;
+        margin: 40px auto 100px;
+      }
+      .comments-title {
+        font-size: 18px;
+      }
+      .comments-sub {
+        font-size: 12px;
+        margin-bottom: 28px;
+      }
+      .comment-form {
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .form-group input,
+      .form-group textarea {
+        font-size: 16px;
+        padding: 12px 14px;
+      }
+      .form-group textarea {
+        min-height: 80px;
+      }
+      .submit-btn {
+        padding: 10px 25px;
+        font-size: 10px;
+      }
+      .comment-list {
+        gap: 12px;
+      }
+      .comment-card {
+        padding: 18px 20px;
+      }
+      .comment-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 11px;
+      }
+      .comment-name {
+        font-size: 12px;
+      }
+      .comment-date {
+        font-size: 11px;
+      }
+      .comment-region {
+        font-size: 8px;
+        padding: 2px 6px;
+      }
+      .comment-body {
+        font-size: 16px;
+      }
+    }
+
     @media (max-width: 768px) {
       nav { padding:16px 20px; }
       nav ul { gap:20px; }
@@ -393,10 +626,38 @@
 
     <p>Şimdi, Noxus'un sınırları yeniden genişlerken, Darius'un baltası tekrar keskinleşiyor. Kan kokusunu alan düşmanları için artık çok geç. Çünkü Darius geldiğinde, sadece ölüm gelmez; beraberinde gücün mutlak ve acımasız hükmü gelir.</p>
 
-    <div class="back-nav">
-      <a href="index.html" class="back-btn">← Efsanelere Dön</a>
-    </div>
   </main>
+
+  <!-- YORUMLAR -->
+  <section class="comments-section">
+    <div class="comments-title">Yorumlar</div>
+    <p class="comments-sub">Bu hikaye hakkında ne düşünüyorsun?</p>
+
+    <!-- Yorum Formu -->
+    <div class="comment-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>İsim</label>
+          <input type="text" id="commentName" placeholder="Adın...">
+        </div>
+        <div class="form-group">
+          <label>Bölge</label>
+          <input type="text" id="commentRegion" placeholder="Noxus, Demacia...">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Yorum</label>
+        <textarea id="commentText" placeholder="Hikaye hakkında düşüncelerini yaz..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitComment()">Yorum Gönder 🩸</button>
+      <div class="comment-success" id="commentSuccess">✦ Yorumun eklendi, gezgin! ✦</div>
+    </div>
+
+    <!-- Yorum Listesi -->
+    <div class="comment-list" id="commentList">
+      <!-- Yorum kartları buraya JavaScript ile eklenecek -->
+    </div>
+  </section>
 
   <footer>
     <div class="footer-logo">Runeterra Günlükleri</div>

@@ -5,26 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Runeterra Günlükleri</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #06080f; --bg2: #090d18; --card: #0b1020; --border: #1a2035;
       --gold: #c8972a; --gold2: #e8c060; --blue: #4a9eff; --text: #d4c9b8; --muted: #6a7080;
+      /* Animation timing variables */
+      --anim-duration: 0.8s;
+      --anim-delay-nav: 4.2s;
+      --anim-delay-rune-line: 3.2s;
+      --anim-delay-hero-sub: 3.3s;
+      --anim-delay-h1: 3.5s;
+      --anim-delay-hero-desc: 3.7s;
+      --anim-delay-hero-cta: 3.9s;
+      --anim-delay-scroll-hint: 4.2s;
+      --anim-delay-music-btn: 4.5s;
     }
 
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Crimson Pro', serif; font-size: 18px; line-height: 1.8; overflow-x: hidden; margin: 0; }
 
-    #scroll-lock { position: fixed; inset: 0; z-index: 999999; animation: removeLock 0s linear 4.5s forwards; }
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001s !important;
+      }
+    }
+
+    #scroll-lock { position: fixed; inset: 0; z-index: 999999; animation: removeLock 0s linear var(--anim-delay-nav) forwards; }
     @keyframes removeLock { to { visibility: hidden; pointer-events: none; } }
 
     @keyframes ambientGlow { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
     body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(74,158,255,0.05) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(200,151,42,0.07) 0%, transparent 60%); pointer-events: none; z-index: 0; animation: ambientGlow 10s ease-in-out infinite; }
 
     /* NAV MENÜSÜ */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.92); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(200,151,42,0.15); opacity: 0; animation: navFadeDown 0.8s ease-out 4.2s forwards; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 56px; background: rgba(6,8,15,0.92); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(200,151,42,0.15); opacity: 0; animation: navFadeDown var(--anim-duration) ease-out var(--anim-delay-nav) forwards; }
     @keyframes navFadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     .logo { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 900; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; transition: text-shadow 0.3s; }
     .logo:hover { text-shadow: 0 0 15px rgba(200,151,42,0.5); }
@@ -57,23 +76,23 @@
       100% { transform: translate(0vw, 0vh) scale(1) rotate(540deg); opacity: 1; color: var(--gold); text-shadow: 0 0 5px var(--gold); filter: brightness(1); }
     }
     @keyframes pulseRune { 0%, 100% { text-shadow: 0 0 5px var(--gold); transform: scale(1); } 50% { text-shadow: 0 0 20px var(--gold2); transform: scale(1.2); } }
-    .rune-line { display: block; width: 0px; height: 1px; opacity: 0; animation: expandLine 0.6s cubic-bezier(0.2, 1, 0.2, 1) 3.2s forwards; }
+    .rune-line { display: block; width: 0px; height: 1px; opacity: 0; animation: expandLine var(--anim-duration) cubic-bezier(0.2, 1, 0.2, 1) var(--anim-delay-rune-line) forwards; }
     .rune-line.left { background: linear-gradient(90deg, transparent, var(--gold)); }
     .rune-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
     @keyframes expandLine { from { width: 0px; opacity: 0; } to { width: 80px; opacity: 1; } }
 
     @keyframes textFadeUp { from { opacity: 0; transform: translateY(30px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0px); } }
-    .hero-sub { font-family: 'Cinzel', serif; font-size: clamp(14px, 2vw, 20px); font-weight: 400; color: var(--gold); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 32px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.3s forwards; }
-    h1 { font-family: 'Cinzel', serif; font-size: clamp(42px, 7vw, 88px); font-weight: 900; line-height: 1.05; letter-spacing: 0.04em; color: #fff; text-shadow: 0 0 60px rgba(200,151,42,0.25); margin-bottom: 8px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.5s forwards; }
-    .hero-desc { font-size: 18px; font-style: italic; color: var(--muted); max-width: 560px; line-height: 1.8; margin-bottom: 52px; opacity: 0; animation: textFadeUp 0.8s ease-out 3.7s forwards; }
-    
+    .hero-sub { font-family: 'Cinzel', serif; font-size: clamp(14px, 2vw, 20px); font-weight: 400; color: var(--gold); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 32px; opacity: 0; animation: textFadeUp var(--anim-duration) ease-out var(--anim-delay-hero-sub) forwards; }
+    h1 { font-family: 'Cinzel', serif; font-size: clamp(42px, 7vw, 88px); font-weight: 900; line-height: 1.05; letter-spacing: 0.04em; color: #fff; text-shadow: 0 0 60px rgba(200,151,42,0.25); margin-bottom: 8px; opacity: 0; animation: textFadeUp var(--anim-duration) ease-out var(--anim-delay-h1) forwards; }
+    .hero-desc { font-size: 18px; font-style: italic; color: var(--muted); max-width: 560px; line-height: 1.8; margin-bottom: 52px; opacity: 0; animation: textFadeUp var(--anim-duration) ease-out var(--anim-delay-hero-desc) forwards; }
+
     @keyframes buttonShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
-    .hero-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden; opacity: 0; animation: textFadeUp 0.8s ease-out 3.9s forwards; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; border: 1px solid rgba(200,151,42,0.5); color: var(--gold); font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden; opacity: 0; animation: textFadeUp var(--anim-duration) ease-out var(--anim-delay-hero-cta) forwards; }
     .hero-cta::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(200,151,42,0.4), transparent); transform: skewX(-25deg); animation: buttonShine 4s infinite; }
     .hero-cta:hover { border-color: var(--gold); color: var(--gold2); background: rgba(200,151,42,0.07); box-shadow: 0 0 20px rgba(200,151,42,0.2); }
 
     @keyframes hintFadeUp { from { opacity: 0; transform: translateX(-50%) translateY(30px); filter: blur(4px); } to { opacity: 1; transform: translateX(-50%) translateY(0); filter: blur(0px); } }
-    .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0; animation: hintFadeUp 0.8s ease-out 4.2s forwards, floatY 2.5s ease-in-out infinite 5.0s; }
+    .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0; animation: hintFadeUp var(--anim-duration) ease-out var(--anim-delay-scroll-hint) forwards, floatY 2.5s ease-in-out infinite 5.0s; }
     .scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--gold), transparent); }
     @keyframes floatY { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
 
@@ -83,20 +102,20 @@
       backdrop-filter: blur(10px); border: 1px solid rgba(200, 151, 42, 0.3); color: var(--gold);
       font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.15em; padding: 12px 24px;
       border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 10px;
-      text-transform: uppercase; transition: all 0.3s ease; opacity: 0; animation: hintFadeUp 0.8s ease-out 4.5s forwards;
+      text-transform: uppercase; transition: all 0.3s ease; opacity: 0; animation: hintFadeUp var(--anim-duration) ease-out var(--anim-delay-music-btn) forwards;
     }
     .music-btn:hover { background: rgba(200, 151, 42, 0.1); border-color: var(--gold); box-shadow: 0 0 15px rgba(200, 151, 42, 0.2); }
     .music-btn.playing { border-color: var(--gold2); box-shadow: 0 0 25px rgba(200, 151, 42, 0.2); color: #fff; }
     .music-icon { font-size: 14px; }
 
     /* FİLTRE VE BÖLÜM TASARIMLARI */
-    .controls-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 40px; opacity: 0; animation: textFadeUp 0.8s ease-out 0.5s forwards; }
+    .controls-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 40px; opacity: 0; animation: textFadeUp var(--anim-duration) ease-out 0.5s forwards; }
     .control-box { display: flex; align-items: center; gap: 12px; background: rgba(11, 16, 32, 0.6); padding: 8px 16px; border: 1px solid rgba(200, 151, 42, 0.2); border-radius: 4px; transition: border-color 0.3s, box-shadow 0.3s; }
     .control-box:hover { border-color: rgba(200, 151, 42, 0.6); box-shadow: 0 0 15px rgba(200, 151, 42, 0.1); }
     .control-box label { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; }
     .control-box select { background: transparent; color: #fff; border: none; font-family: 'Crimson Pro', serif; font-size: 16px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 10px; }
     .control-box select option { background: var(--bg); color: var(--text); }
-    
+
     .section-wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 48px; }
     .section-title { text-align: center; padding: 80px 0 30px; }
     .section-eyebrow { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 16px; }
@@ -123,27 +142,27 @@
     .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
     .story-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s, box-shadow 0.4s; }
     .story-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--rbo); box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px var(--rb); }
-    
+
     .card-region-bar { height: 3px; width: 100%; transition: height 0.3s; background: var(--rc); }
     .story-card:hover .card-region-bar { height: 5px; }
     .card-body { padding: 28px; }
     .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    
+
     .card-content-flex { display: flex; align-items: flex-start; margin-bottom: 20px; position: relative; }
     .img-container { width: 0px; opacity: 0; overflow: hidden; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; flex-shrink: 0; }
     .story-card:hover .img-container { width: 86px; opacity: 1; }
     .card-hover-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; margin-right: 14px; transform: scale(0.8) translateX(-20px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--rc); box-shadow: 0 0 15px var(--rb); }
     .story-card:hover .card-hover-img { transform: scale(1) translateX(0); }
-    
+
     .card-text-wrapper { flex-grow: 1; width: 100%; }
     .card-title-container { display: grid; margin-bottom: 8px; }
     .card-title-container > div { grid-area: 1 / 1; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; line-height: 1.3; letter-spacing: 0.05em; transition: opacity 0.4s ease, transform 0.4s ease; }
-    
+
     .title-name { color: #fff; opacity: 1; transform: translateY(0); }
     .title-epic { color: var(--rc); opacity: 0; transform: translateY(10px); pointer-events: none; text-shadow: 0 0 12px var(--rb); }
     .story-card:hover .title-name { opacity: 0; transform: translateY(-10px); }
     .story-card:hover .title-epic { opacity: 1; transform: translateY(0); }
-    
+
     .card-region { color: var(--rc); background: var(--rb); border-color: var(--rbo); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; border: 1px solid; }
     .card-date { font-size: 13px; color: var(--muted); font-style: italic; }
     .card-excerpt { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 0; font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 72px; }
@@ -161,7 +180,7 @@
     .about-title-small { font-size: 14px; color: var(--gold); font-style: italic; }
     .about-right h3 { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 20px; }
     .about-right p { font-size: 17px; color: var(--muted); margin-bottom: 16px; line-height: 1.85; }
-    
+
     .regions-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
     .region-badge { font-family: 'Cinzel', serif; font-size: 11px; padding: 6px 14px; border-radius: 2px; border: 1px solid var(--rbo, rgba(200,151,42,0.3)); color: var(--rc, var(--gold)); background: var(--rb, rgba(200,151,42,0.06)); letter-spacing: 0.1em; transition: all 0.3s; }
     .region-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--rb, rgba(200,151,42,0.15)); filter: brightness(1.2); }
@@ -185,6 +204,23 @@
     #page-transition-overlay.active { visibility: visible; pointer-events: all; }
     #page-transition-overlay.active .transition-splash { opacity: 1; transform: scale(1); }
     #page-transition-overlay.active.blackout .transition-blackout { opacity: 1; }
+
+    /* Focus styles for accessibility */
+    .interactive-el:focus-visible,
+    .story-card:focus-visible,
+    nav a:focus-visible,
+    .control-box:focus-visible,
+    .music-btn:focus-visible,
+    .region-badge:focus-visible,
+    .footer-logo:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    /* Ensure focusable elements are tabbable */
+    button, [role="button"], a[href], input, select, textarea, [tabindex]:not([tabindex="-1"]) {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -266,7 +302,7 @@
           </select>
         </div>
       </div>
-      
+
       <div class="stories-grid" id="main-grid"></div>
     </div>
   </section>
@@ -325,6 +361,7 @@
       });
     }, { threshold: 0.08 });
 
+    // Champion data moved to JSON block for better organization
     const championsData = [
       { id: "Volibear", name: "Volibear", epic: "Fırtınanın Pençeleri", regionClass: "freljord", regionDisplay: "Freljord", date: "15 Mayıs 2026", excerpt: "Kuzeyin dondurucu rüzgarları sadece soğuk getirmiyordu; yaklaşan fırtınanın, vahşi doğanın ta kendisinin habercisiydi. Gökyüzü kara bulutlarla kaplandığında..." },
       { id: "Garen", name: "Garen", epic: "Demacia'nın Kudreti", regionClass: "demacia", regionDisplay: "Demacia", date: "10 Mayıs 2026", excerpt: "Demacia'nın görkemli surları, ancak onları koruyan yürekler kadar güçlüdür. Garen, kılıcını her savurduğunda krallığının sarsılmaz inancını da ileriye taşıyordu." },
@@ -375,14 +412,14 @@
       { id: "Renekton", name: "Renekton", epic: "Kumların Kasabı", regionClass: "shurima", regionDisplay: "Shurima", date: "15 Eylül 2025", excerpt: "Bir zamanlar Shurima'nın gururu olan Renekton, yüzyıllar süren karanlıkta aklını yitirdi. Artık sadece öfkesiyle beslenen ve ağabeyinin kanını arayan bir canavardır." },
       { id: "Gangplank", name: "Gangplank", epic: "Okyanus Şeytanı", regionClass: "bilgewater", regionDisplay: "Bilgewater", date: "10 Eylül 2025", excerpt: "Bilgewater'ın taçsız kralı. Gangplank her şeyini kaybetmiş olabilir ama yanan kılıcı ve patlamaya hazır fıçılarıyla şehrini geri almaya eskisinden çok daha acımasız geliyor." },
       { id: "Velkoz", name: "Vel'Koz", epic: "Hiçlik'in Gözü", regionClass: "void", regionDisplay: "Hiçlik", date: "05 Eylül 2025", excerpt: "Onun için varoluş sadece analiz edilmesi gereken bir denklemdir. Vel'Koz, gözünden saçtığı yıkıcı enerjiyle kurbanlarını parçalarken sadece bilgi edinmeyi amaçlar." },
-      { id: "Lissandra", name: "Lissandra", epic: "Buz Cadısı", regionClass: "freljord", regionDisplay: "Freljord", date: "01 Eylül 2025", excerpt: "Kara Buz'un dondurucu kalbi onun göğsünde atıyor. Lissandra, dünyanın sırlarını kadim buzların ardına gömerken, uyuyan dehşetleri kendi iradesiyle kontrol altında tutuyor." }
+      { id: "Lissandra", name: "Lissandra", epic: "Buz Cadısı", regionClass: "freljord", regionDisplay: "Freljord", date: "01 Eylül 2025", excerpt: "Kara Buz'un dondurucu kalbi onun göğsünde atıyor. Lissandra, dünyanın sırlarını kadim buzların ardına gömerken, uyuyan dehşetleri kendi iradesiyle kontrol altında tutuyor." },
     ];
 
     const grid = document.getElementById('main-grid');
 
     // SİNEMATİK GEÇİŞ FONKSİYONU
     function triggerCinematicTransition(e, pageLink, championId) {
-      e.preventDefault(); 
+      e.preventDefault();
       const overlay = document.getElementById('page-transition-overlay');
       const splash = document.getElementById('transition-splash');
       splash.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championId}_0.jpg')`;
@@ -401,7 +438,7 @@
         const card = document.createElement('div');
         const pageLink = champ.id.toLowerCase() + '.html';
         card.className = `story-card ${champ.regionClass} fade-in interactive-el`;
-        card.dataset.index = index; 
+        card.dataset.index = index;
         card.innerHTML = `
           <div class="card-region-bar"></div>
           <div class="card-body">
@@ -435,7 +472,7 @@
     renderChampions();
 
     /* -------------------------------------------------------------------------
-       2. FİLTRELEME VE SIRALAMA ALGORİTMASI 
+       2. FİLTRELEME VE SIRALAMA ALGORİTMASI
        ------------------------------------------------------------------------- */
     const filterSelect = document.getElementById('filter-region');
     const sortSelect = document.getElementById('sort-order');
@@ -461,38 +498,70 @@
     sortSelect.addEventListener('change', updateGrid);
 
     /* -------------------------------------------------------------------------
-       3. YOUTUBE API (ARKA PLAN MÜZİĞİ)
+       3. YOUTUBE API (ARKA PLAN MÜZİĞİ) - Lazy loaded
        ------------------------------------------------------------------------- */
-    try {
-      const tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      document.head.appendChild(tag);
-      const musicBtn = document.getElementById('music-toggle');
-      let isMusicPlaying = false; 
-      musicBtn.addEventListener('click', () => {
-        if (!window.ytPlayer || typeof window.ytPlayer.playVideo !== 'function') return;
-        if (!isMusicPlaying) {
-          window.ytPlayer.playVideo();
-          musicBtn.querySelector('.music-icon').textContent = '🔊';
-          musicBtn.querySelector('.music-text').textContent = 'Sesi Kapat';
-          musicBtn.classList.add('playing');
-          isMusicPlaying = true;
-        } else {
-          window.ytPlayer.pauseVideo();
-          musicBtn.querySelector('.music-icon').textContent = '🔇';
-          musicBtn.querySelector('.music-text').textContent = 'Sesi Aç';
-          musicBtn.classList.remove('playing');
-          isMusicPlaying = false;
+    const musicBtn = document.getElementById('music-toggle');
+    let isMusicPlaying = false;
+    let ytPlayerReady = false;
+    let ytPlayer = null;
+
+    musicBtn.addEventListener('click', async () => {
+      // Lazy load YouTube API if not already loaded
+      if (!ytPlayerReady) {
+        try {
+          await loadYouTubeAPI();
+        } catch (error) {
+          console.error('YouTube API yükleme hatası:', error);
+          return;
         }
+      }
+
+      if (!ytPlayer || typeof ytPlayer.playVideo !== 'function') return;
+
+      if (!isMusicPlaying) {
+        ytPlayer.playVideo();
+        musicBtn.querySelector('.music-icon').textContent = '🔊';
+        musicBtn.querySelector('.music-text').textContent = 'Sesi Kapat';
+        musicBtn.classList.add('playing');
+        isMusicPlaying = true;
+      } else {
+        ytPlayer.pauseVideo();
+        musicBtn.querySelector('.music-icon').textContent = '🔇';
+        musicBtn.querySelector('.music-text').textContent = 'Sesi Aç';
+        musicBtn.classList.remove('playing');
+        isMusicPlaying = false;
+      }
+    });
+
+    function loadYouTubeAPI() {
+      return new Promise((resolve, reject) => {
+        // If already loaded, resolve immediately
+        if (window.YT && window.YT.Player) {
+          resolve();
+          return;
+        }
+
+        // Create script tag
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.onload = () => {
+          // YouTube API loaded, now create player when ready
+          window.onYouTubeIframeAPIReady = function() {
+            ytPlayer = new YT.Player('youtube-player', {
+              height: '200', width: '200', videoId: 'aPf9EcHbWHE',
+              playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'start': 2 },
+              events: { 'onReady': (event) => {
+                event.target.setVolume(30);
+                ytPlayerReady = true;
+                resolve();
+              } }
+            });
+          };
+        };
+        tag.onerror = (error) => reject(error);
+        document.head.appendChild(tag);
       });
-      window.onYouTubeIframeAPIReady = function() {
-        window.ytPlayer = new YT.Player('youtube-player', {
-          height: '200', width: '200', videoId: 'aPf9EcHbWHE', 
-          playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'start': 2 },
-          events: { 'onReady': (event) => event.target.setVolume(30) }
-        });
-      };
-    } catch (e) {}
+    }
   </script>
 </body>
 </html>
